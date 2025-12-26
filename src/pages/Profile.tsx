@@ -1,5 +1,7 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { BottomNavigation } from "@/components/BottomNavigation";
+import { useAuth } from "@/hooks/useAuth";
 import {
   Dialog,
   DialogContent,
@@ -26,6 +28,7 @@ import {
   Phone,
   Lock,
   Fingerprint,
+  LogIn,
 } from "lucide-react";
 
 interface SettingsItemProps {
@@ -63,15 +66,17 @@ function SettingsItem({ icon, label, subtitle, onClick, danger }: SettingsItemPr
 }
 
 export default function Profile() {
+  const navigate = useNavigate();
+  const { user, signOut } = useAuth();
   const { toast } = useToast();
   const [personalInfoOpen, setPersonalInfoOpen] = useState(false);
   const [securityOpen, setSecurityOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [logoutConfirmOpen, setLogoutConfirmOpen] = useState(false);
 
-  // Form states
-  const [name, setName] = useState("James Ochieng");
-  const [email, setEmail] = useState("james.ochieng@mak.ac.ug");
+  // Form states - use user data if available
+  const [name, setName] = useState(user?.email?.split("@")[0] || "Guest User");
+  const [email, setEmail] = useState(user?.email || "guest@example.com");
   const [phone, setPhone] = useState("0770 123 456");
 
   // Security states
@@ -91,13 +96,42 @@ export default function Profile() {
     });
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     setLogoutConfirmOpen(false);
+    await signOut();
     toast({
       title: "Logged Out",
       description: "You have been successfully logged out.",
     });
+    navigate("/");
   };
+
+  // Show login prompt if not authenticated
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-background pb-24">
+        <header className="bg-primary px-4 pt-12 pb-8">
+          <h1 className="text-2xl font-bold text-primary-foreground mb-6">Profile</h1>
+        </header>
+        <main className="px-4 pt-8 flex flex-col items-center justify-center">
+          <div className="bg-card rounded-2xl p-8 shadow-card border border-border text-center max-w-sm w-full">
+            <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
+              <User className="h-8 w-8 text-primary" />
+            </div>
+            <h2 className="text-xl font-bold text-foreground mb-2">Welcome to BudgetWise</h2>
+            <p className="text-muted-foreground mb-6">
+              Sign in to access your profile, manage settings, and track your savings.
+            </p>
+            <Button onClick={() => navigate("/auth")} className="w-full gap-2">
+              <LogIn className="h-4 w-4" />
+              Sign In / Sign Up
+            </Button>
+          </div>
+        </main>
+        <BottomNavigation />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background pb-24">
@@ -117,10 +151,10 @@ export default function Profile() {
               </button>
             </div>
             <div className="flex-1">
-              <h2 className="font-bold text-foreground text-lg">{name}</h2>
-              <p className="text-sm text-muted-foreground">{email}</p>
+              <h2 className="font-bold text-foreground text-lg capitalize">{name}</h2>
+              <p className="text-sm text-muted-foreground">{user.email}</p>
               <p className="text-xs text-muted-foreground mt-0.5">
-                Makerere University • Year 3
+                BudgetWise Member
               </p>
             </div>
           </div>
