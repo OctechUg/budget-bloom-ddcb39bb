@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils";
-import { ArrowDownLeft, ArrowUpRight, Ban } from "lucide-react";
+import { ArrowDownLeft, ArrowUpRight, Ban, ExternalLink } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 export interface Transaction {
   id: string;
@@ -35,8 +36,24 @@ export function TransactionItem({ transaction }: TransactionItemProps) {
     return <ArrowUpRight className="h-4 w-4" />;
   };
 
+  const getStatusBadge = () => {
+    return (
+      <Badge 
+        variant="outline" 
+        className={cn(
+          "text-[10px] px-1.5 py-0 h-4",
+          transaction.type === "income" && "border-success/50 text-success bg-success/10",
+          transaction.type === "expense" && "border-primary/50 text-primary bg-primary/10",
+          transaction.type === "blocked" && "border-blocked/50 text-blocked bg-blocked/10"
+        )}
+      >
+        {transaction.type === "blocked" ? "blocked" : "confirmed"}
+      </Badge>
+    );
+  };
+
   return (
-    <div className="flex items-center gap-3 py-3 border-b border-border last:border-0">
+    <div className="flex items-center gap-3 py-3 border-b border-border/50 last:border-0">
       <div
         className={cn(
           "w-10 h-10 rounded-xl flex items-center justify-center",
@@ -49,16 +66,24 @@ export function TransactionItem({ transaction }: TransactionItemProps) {
       </div>
 
       <div className="flex-1 min-w-0">
-        <p className="font-medium text-foreground truncate">
-          {transaction.description}
-        </p>
-        <p className="text-xs text-muted-foreground">{transaction.category}</p>
+        <div className="flex items-center gap-2">
+          <p className="font-medium text-foreground truncate text-sm">
+            {transaction.category}
+          </p>
+          {getStatusBadge()}
+        </div>
+        <div className="flex items-center gap-1 text-xs text-muted-foreground">
+          <span>{transaction.date}</span>
+          <span>•</span>
+          <span className="font-mono text-[10px]">0xA3...9C78</span>
+          <ExternalLink className="h-2.5 w-2.5" />
+        </div>
       </div>
 
       <div className="text-right">
         <p
           className={cn(
-            "font-semibold",
+            "font-bold text-sm",
             transaction.type === "income" && "text-success",
             transaction.type === "expense" && "text-foreground",
             transaction.type === "blocked" && "text-blocked line-through"
@@ -67,7 +92,9 @@ export function TransactionItem({ transaction }: TransactionItemProps) {
           {transaction.type === "income" ? "+" : "-"}
           {formatCurrency(transaction.amount)}
         </p>
-        <p className="text-xs text-muted-foreground">{transaction.date}</p>
+        <p className="text-[10px] text-muted-foreground">
+          ~0.066 USDC
+        </p>
       </div>
     </div>
   );

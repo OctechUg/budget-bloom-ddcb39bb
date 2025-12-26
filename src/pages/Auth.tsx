@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -126,7 +126,7 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen gradient-bg flex flex-col">
       {/* Header */}
       <div className="p-6">
         <button 
@@ -142,7 +142,7 @@ const Auth = () => {
       <div className="flex-1 flex flex-col items-center justify-center px-6 pb-12">
         {/* Logo & Title */}
         <div className="flex flex-col items-center mb-8">
-          <div className="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center mb-4 shadow-card">
+          <div className="w-16 h-16 gradient-primary rounded-2xl flex items-center justify-center mb-4 shadow-glow">
             <Wallet className="w-8 h-8 text-primary-foreground" />
           </div>
           <h1 className="text-2xl font-bold text-foreground">BudgetWise</h1>
@@ -154,7 +154,7 @@ const Auth = () => {
         {/* Form */}
         <form onSubmit={handleAuth} className="w-full max-w-sm space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email" className="text-foreground">Email</Label>
             <div className="relative">
               <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
               <Input
@@ -166,7 +166,7 @@ const Auth = () => {
                   setEmail(e.target.value);
                   if (errors.email) setErrors({ ...errors, email: undefined });
                 }}
-                className={`pl-10 ${errors.email ? "border-destructive" : ""}`}
+                className={`pl-10 bg-muted/50 border-border ${errors.email ? "border-destructive" : ""}`}
               />
             </div>
             {errors.email && (
@@ -175,7 +175,7 @@ const Auth = () => {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password" className="text-foreground">Password</Label>
             <div className="relative">
               <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
               <Input
@@ -187,7 +187,7 @@ const Auth = () => {
                   setPassword(e.target.value);
                   if (errors.password) setErrors({ ...errors, password: undefined });
                 }}
-                className={`pl-10 pr-10 ${errors.password ? "border-destructive" : ""}`}
+                className={`pl-10 pr-10 bg-muted/50 border-border ${errors.password ? "border-destructive" : ""}`}
               />
               <button
                 type="button"
@@ -204,7 +204,7 @@ const Auth = () => {
 
           {!isLogin && (
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirm Password</Label>
+              <Label htmlFor="confirmPassword" className="text-foreground">Confirm Password</Label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                 <Input
@@ -216,7 +216,7 @@ const Auth = () => {
                     setConfirmPassword(e.target.value);
                     if (errors.confirmPassword) setErrors({ ...errors, confirmPassword: undefined });
                   }}
-                  className={`pl-10 pr-10 ${errors.confirmPassword ? "border-destructive" : ""}`}
+                  className={`pl-10 pr-10 bg-muted/50 border-border ${errors.confirmPassword ? "border-destructive" : ""}`}
                 />
                 <button
                   type="button"
@@ -232,7 +232,7 @@ const Auth = () => {
             </div>
           )}
 
-          <Button type="submit" className="w-full" size="lg" disabled={loading}>
+          <Button type="submit" className="w-full h-12 gradient-primary shadow-glow hover:opacity-90" size="lg" disabled={loading}>
             {loading ? "Please wait..." : isLogin ? "Log In" : "Create Account"}
           </Button>
         </form>

@@ -14,7 +14,6 @@ export function BudgetCard({
   icon,
   spent,
   budget,
-  color = "primary",
 }: BudgetCardProps) {
   const percentage = Math.min((spent / budget) * 100, 100);
   const remaining = budget - spent;
@@ -33,8 +32,8 @@ export function BudgetCard({
   return (
     <div
       className={cn(
-        "bg-card rounded-2xl p-4 shadow-soft border transition-all duration-300 hover:shadow-card",
-        isOverBudget ? "border-blocked/30" : "border-border"
+        "glass-card rounded-2xl p-4 transition-all duration-300",
+        isOverBudget && "border-blocked/30"
       )}
     >
       <div className="flex items-start justify-between mb-3">
@@ -52,7 +51,7 @@ export function BudgetCard({
             {icon}
           </div>
           <div>
-            <h3 className="font-semibold text-foreground">{category}</h3>
+            <h3 className="font-semibold text-foreground text-sm">{category}</h3>
             <p className="text-xs text-muted-foreground">
               {formatCurrency(spent)} of {formatCurrency(budget)}
             </p>
@@ -67,7 +66,7 @@ export function BudgetCard({
       </div>
 
       {/* Progress bar */}
-      <div className="relative h-2 bg-muted rounded-full overflow-hidden">
+      <div className="relative h-1.5 bg-muted rounded-full overflow-hidden">
         <div
           className={cn(
             "absolute left-0 top-0 h-full rounded-full transition-all duration-500",
