@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import { BalanceCard } from "@/components/BalanceCard";
 import { BudgetCard } from "@/components/BudgetCard";
 import { QuickActions } from "@/components/QuickActions";
@@ -9,12 +9,15 @@ import { WithdrawModal } from "@/components/WithdrawModal";
 import { SetBudgetModal } from "@/components/SetBudgetModal";
 import { NotificationsDropdown } from "@/components/NotificationsDropdown";
 import { BottomNavigation } from "@/components/BottomNavigation";
+import { useAuth } from "@/hooks/useAuth";
+import { Button } from "@/components/ui/button";
 import { 
   Utensils, 
   Car, 
   Book, 
   ShoppingBag, 
   Coffee,
+  LogIn,
 } from "lucide-react";
 
 const mockBudgets = [
@@ -64,11 +67,13 @@ const mockTransactions: Transaction[] = [
 
 export default function Dashboard() {
   const navigate = useNavigate();
+  const { user, loading } = useAuth();
   const [depositOpen, setDepositOpen] = useState(false);
   const [withdrawOpen, setWithdrawOpen] = useState(false);
   const [budgetOpen, setBudgetOpen] = useState(false);
 
   const withdrawableBalance = 125000;
+  const displayName = user?.email?.split("@")[0] || "Guest";
 
   return (
     <div className="min-h-screen bg-background pb-24">
@@ -77,9 +82,19 @@ export default function Dashboard() {
         <div className="flex items-center justify-between mb-6">
           <div>
             <p className="text-primary-foreground/80 text-sm">Good morning,</p>
-            <h1 className="text-xl font-bold text-primary-foreground">James Ochieng</h1>
+            <h1 className="text-xl font-bold text-primary-foreground capitalize">{displayName}</h1>
           </div>
-          <NotificationsDropdown />
+          <div className="flex items-center gap-2">
+            {!user && (
+              <Link to="/auth">
+                <Button variant="secondary" size="sm" className="gap-2">
+                  <LogIn className="h-4 w-4" />
+                  Login
+                </Button>
+              </Link>
+            )}
+            <NotificationsDropdown />
+          </div>
         </div>
 
         {/* Balance Cards */}
