@@ -43,23 +43,17 @@ export default function Budget() {
   };
 
   return (
-    <div className="min-h-screen bg-background pb-24">
-      {/* Header */}
-      <header className="bg-card px-4 pt-12 pb-6 border-b border-border">
+    <div className="min-h-screen gradient-bg pb-24">
+      <header className="px-4 pt-12 pb-6">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-bold text-foreground">Budgets</h1>
-          <Button 
-            variant="action" 
-            size="sm"
-            onClick={() => setBudgetModalOpen(true)}
-          >
+          <Button size="sm" onClick={() => setBudgetModalOpen(true)}>
             <Plus className="h-4 w-4" />
             New Budget
           </Button>
         </div>
 
-        {/* Overall Budget Summary */}
-        <div className="bg-primary/5 rounded-2xl p-4 border border-primary/20">
+        <div className="glass-card rounded-2xl p-4">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm text-muted-foreground">Monthly Budget</span>
             <div className="flex items-center gap-1 text-success text-xs font-medium">
@@ -68,56 +62,24 @@ export default function Budget() {
             </div>
           </div>
           <div className="flex items-end gap-2 mb-3">
-            <span className="text-2xl font-bold text-foreground">
-              {formatCurrency(totalSpent)}
-            </span>
-            <span className="text-muted-foreground text-sm mb-1">
-              of {formatCurrency(totalBudget)}
-            </span>
+            <span className="text-2xl font-bold text-foreground">{formatCurrency(totalSpent)}</span>
+            <span className="text-muted-foreground text-sm mb-1">of {formatCurrency(totalBudget)}</span>
           </div>
           <Progress value={overallPercentage} className="h-2" />
-          <p className="text-xs text-muted-foreground mt-2">
-            {formatCurrency(totalBudget - totalSpent)} remaining this month
-          </p>
+          <p className="text-xs text-muted-foreground mt-2">{formatCurrency(totalBudget - totalSpent)} remaining</p>
         </div>
       </header>
 
-      {/* Budget Categories */}
-      <main className="px-4 pt-6">
-        <h2 className="text-sm font-semibold text-muted-foreground mb-4 uppercase tracking-wide">
-          Categories
-        </h2>
+      <main className="px-4">
+        <h2 className="text-sm font-semibold text-muted-foreground mb-4 uppercase tracking-wide">Categories</h2>
         <div className="space-y-3">
-          {budgetCategories.map((budget, index) => (
-            <div
-              key={budget.category}
-              className="animate-fade-in"
-              style={{ animationDelay: `${index * 0.05}s` }}
-            >
-              <BudgetCard
-                category={budget.category}
-                icon={budget.icon}
-                spent={budget.spent}
-                budget={budget.budget}
-              />
-            </div>
+          {budgetCategories.map((budget) => (
+            <BudgetCard key={budget.category} category={budget.category} icon={budget.icon} spent={budget.spent} budget={budget.budget} />
           ))}
-        </div>
-
-        {/* Info Card */}
-        <div className="mt-6 bg-success/10 rounded-2xl p-4 border border-success/20">
-          <h3 className="font-semibold text-foreground mb-1">
-            💡 Budget Tip
-          </h3>
-          <p className="text-sm text-muted-foreground">
-            Unused budget funds are automatically moved to your withdrawable savings at the end of each month.
-          </p>
         </div>
       </main>
 
-      {/* Modal */}
       <SetBudgetModal open={budgetModalOpen} onOpenChange={setBudgetModalOpen} />
-
       <BottomNavigation />
     </div>
   );

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { BalanceCard } from "@/components/BalanceCard";
 import { BudgetCard } from "@/components/BudgetCard";
@@ -18,6 +18,9 @@ import {
   ShoppingBag, 
   Coffee,
   LogIn,
+  RefreshCw,
+  Star,
+  X,
 } from "lucide-react";
 
 const mockBudgets = [
@@ -67,68 +70,87 @@ const mockTransactions: Transaction[] = [
 
 export default function Dashboard() {
   const navigate = useNavigate();
-  const { user, loading } = useAuth();
+  const { user } = useAuth();
   const [depositOpen, setDepositOpen] = useState(false);
   const [withdrawOpen, setWithdrawOpen] = useState(false);
   const [budgetOpen, setBudgetOpen] = useState(false);
+  const [showPromo, setShowPromo] = useState(true);
 
   const withdrawableBalance = 125000;
   const displayName = user?.email?.split("@")[0] || "Guest";
 
   return (
-    <div className="min-h-screen bg-background pb-24">
+    <div className="min-h-screen gradient-bg pb-24">
       {/* Header */}
-      <header className="bg-primary px-4 pt-12 pb-8">
+      <header className="px-4 pt-12 pb-6">
         <div className="flex items-center justify-between mb-6">
-          <div>
-            <p className="text-primary-foreground/80 text-sm">Good morning,</p>
-            <h1 className="text-xl font-bold text-primary-foreground capitalize">{displayName}</h1>
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
+              <span className="text-primary font-bold text-lg">
+                {displayName.charAt(0).toUpperCase()}
+              </span>
+            </div>
+            <div>
+              <p className="text-muted-foreground text-sm">Hi {displayName}</p>
+            </div>
           </div>
           <div className="flex items-center gap-2">
             {!user && (
               <Link to="/auth">
-                <Button variant="secondary" size="sm" className="gap-2">
+                <Button variant="outline" size="sm" className="gap-2 border-primary/30 text-primary hover:bg-primary/10">
                   <LogIn className="h-4 w-4" />
                   Login
                 </Button>
               </Link>
             )}
+            <button className="w-10 h-10 rounded-full border border-border flex items-center justify-center text-muted-foreground hover:text-foreground hover:border-primary/50 transition-all">
+              <RefreshCw className="h-4 w-4" />
+            </button>
             <NotificationsDropdown />
           </div>
         </div>
 
-        {/* Balance Cards */}
-        <div className="space-y-3 -mb-16">
-          <BalanceCard
-            title="Wallet Balance"
-            amount={485000}
-            subtitle="Available for budgeting"
-            variant="secondary"
-          />
-          <BalanceCard
-            title="Withdrawable Savings"
-            amount={withdrawableBalance}
-            subtitle="From unused budgets"
-            variant="secondary"
-            showGrowth
-            growthPercentage={12}
-          />
-        </div>
+        {/* Balance Card */}
+        <BalanceCard
+          title="Wallet Balance"
+          amount={485000}
+          subtitle="Available for budgeting"
+          showGrowth
+          growthPercentage={12}
+        />
       </header>
 
       {/* Main Content */}
-      <main className="px-4 pt-20 space-y-6">
+      <main className="px-4 space-y-6">
         {/* Quick Actions */}
         <section className="animate-fade-in" style={{ animationDelay: "0.1s" }}>
-          <h2 className="text-sm font-semibold text-muted-foreground mb-3 uppercase tracking-wide">
-            Quick Actions
-          </h2>
           <QuickActions
             onDeposit={() => setDepositOpen(true)}
             onSetBudget={() => setBudgetOpen(true)}
             onWithdraw={() => setWithdrawOpen(true)}
           />
         </section>
+
+        {/* Promo Banner */}
+        {showPromo && (
+          <section className="animate-fade-in" style={{ animationDelay: "0.15s" }}>
+            <div className="relative glass-card rounded-2xl p-4 flex items-center gap-3 overflow-hidden">
+              <div className="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center shrink-0">
+                <Star className="h-6 w-6 text-primary" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="font-semibold text-foreground text-sm">Share with Friends</p>
+                <p className="text-xs text-muted-foreground">Refer a friend and earn rewards</p>
+              </div>
+              <button 
+                onClick={() => setShowPromo(false)}
+                className="w-8 h-8 rounded-full bg-muted/50 flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+          </section>
+        )}
 
         {/* Budget Overview */}
         <section className="animate-fade-in" style={{ animationDelay: "0.2s" }}>
@@ -144,7 +166,7 @@ export default function Dashboard() {
             </button>
           </div>
           <div className="space-y-3">
-            {mockBudgets.map((budget) => (
+            {mockBudgets.slice(0, 2).map((budget) => (
               <BudgetCard
                 key={budget.category}
                 category={budget.category}
@@ -160,7 +182,7 @@ export default function Dashboard() {
         <section className="animate-fade-in" style={{ animationDelay: "0.3s" }}>
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
-              Recent Activity
+              Recent Transactions
             </h2>
             <button 
               onClick={() => navigate("/wallet")}
@@ -169,8 +191,8 @@ export default function Dashboard() {
               See All
             </button>
           </div>
-          <div className="bg-card rounded-2xl p-4 shadow-soft border border-border">
-            {mockTransactions.map((transaction) => (
+          <div className="glass-card rounded-2xl p-4">
+            {mockTransactions.slice(0, 3).map((transaction) => (
               <TransactionItem key={transaction.id} transaction={transaction} />
             ))}
           </div>

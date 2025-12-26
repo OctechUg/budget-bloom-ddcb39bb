@@ -4,9 +4,8 @@ import { BalanceCard } from "@/components/BalanceCard";
 import { TransactionItem, Transaction } from "@/components/TransactionItem";
 import { DepositModal } from "@/components/DepositModal";
 import { WithdrawModal } from "@/components/WithdrawModal";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ArrowDownToLine, ArrowUpFromLine, Search, Filter, X } from "lucide-react";
+import { Search, ChevronDown } from "lucide-react";
 
 const mockTransactions: Transaction[] = [
   {
@@ -36,7 +35,7 @@ const mockTransactions: Transaction[] = [
   {
     id: "4",
     type: "income",
-    category: "Deposit",
+    category: "Wallet Deposit",
     description: "Airtel Money",
     amount: 150000,
     date: "Dec 23, 2025",
@@ -62,9 +61,9 @@ const mockTransactions: Transaction[] = [
 export default function Wallet() {
   const [depositOpen, setDepositOpen] = useState(false);
   const [withdrawOpen, setWithdrawOpen] = useState(false);
-  const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterType, setFilterType] = useState<"all" | "income" | "expense" | "blocked">("all");
+  const [statusFilter, setStatusFilter] = useState("All Status");
 
   const withdrawableBalance = 125000;
 
@@ -76,93 +75,46 @@ export default function Wallet() {
   });
 
   return (
-    <div className="min-h-screen bg-background pb-24">
+    <div className="min-h-screen gradient-bg pb-24">
       {/* Header */}
-      <header className="bg-card px-4 pt-12 pb-6 border-b border-border">
-        <h1 className="text-2xl font-bold text-foreground mb-6">Wallet</h1>
-
-        {/* Balance Cards */}
-        <div className="space-y-3 mb-6">
-          <BalanceCard
-            title="Total Balance"
-            amount={610000}
-            variant="primary"
-          />
-        </div>
-
-        {/* Action Buttons */}
-        <div className="flex gap-3">
-          <Button 
-            variant="action" 
-            className="flex-1" 
-            size="lg"
-            onClick={() => setDepositOpen(true)}
-          >
-            <ArrowDownToLine className="h-5 w-5" />
-            Deposit
-          </Button>
-          <Button 
-            variant="success" 
-            className="flex-1" 
-            size="lg"
-            onClick={() => setWithdrawOpen(true)}
-          >
-            <ArrowUpFromLine className="h-5 w-5" />
-            Withdraw
-          </Button>
-        </div>
-      </header>
-
-      {/* Transaction History */}
-      <main className="px-4 pt-6">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold text-foreground">
-            Transaction History
-          </h2>
-          <div className="flex gap-2">
-            <Button 
-              variant={searchOpen ? "default" : "outline"} 
-              size="icon"
-              onClick={() => setSearchOpen(!searchOpen)}
-            >
-              {searchOpen ? <X className="h-4 w-4" /> : <Search className="h-4 w-4" />}
-            </Button>
-            <Button variant="outline" size="icon">
-              <Filter className="h-4 w-4" />
-            </Button>
-          </div>
+      <header className="px-4 pt-12 pb-6">
+        <div className="flex items-center justify-between mb-6">
+          <button className="w-10 h-10 rounded-full border border-border flex items-center justify-center text-muted-foreground">
+            ‹
+          </button>
+          <h1 className="text-lg font-semibold text-foreground">Transaction</h1>
+          <button className="w-10 h-10 rounded-full border border-border flex items-center justify-center text-muted-foreground">
+            ⓘ
+          </button>
         </div>
 
         {/* Search Bar */}
-        {searchOpen && (
-          <div className="mb-4 animate-fade-in">
-            <Input
-              placeholder="Search transactions..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="h-11"
-            />
-          </div>
-        )}
-
-        {/* Filter Tabs */}
-        <div className="flex gap-2 mb-4 overflow-x-auto pb-1">
-          {(["all", "income", "expense", "blocked"] as const).map((type) => (
-            <button
-              key={type}
-              onClick={() => setFilterType(type)}
-              className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all ${
-                filterType === type
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-muted text-muted-foreground hover:bg-muted/80"
-              }`}
-            >
-              {type === "all" ? "All" : type.charAt(0).toUpperCase() + type.slice(1)}
-            </button>
-          ))}
+        <div className="relative mb-4">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search Transactions"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-11 h-12 bg-muted/50 border-border rounded-xl"
+          />
         </div>
 
-        <div className="bg-card rounded-2xl p-4 shadow-soft border border-border">
+        {/* Filter Tabs */}
+        <div className="flex gap-2">
+          <button className="flex-1 flex items-center justify-between px-4 py-3 rounded-xl bg-muted/50 border border-border text-sm text-foreground">
+            <span>All types</span>
+            <ChevronDown className="h-4 w-4 text-muted-foreground" />
+          </button>
+          <button className="flex-1 flex items-center justify-between px-4 py-3 rounded-xl bg-muted/50 border border-border text-sm text-foreground">
+            <span>{statusFilter}</span>
+            <ChevronDown className="h-4 w-4 text-muted-foreground" />
+          </button>
+        </div>
+      </header>
+
+      {/* Transaction List */}
+      <main className="px-4">
+        <div className="glass-card rounded-2xl p-4">
           {filteredTransactions.length > 0 ? (
             filteredTransactions.map((transaction) => (
               <TransactionItem key={transaction.id} transaction={transaction} />
