@@ -1,5 +1,17 @@
+import { useState } from "react";
 import { BottomNavigation } from "@/components/BottomNavigation";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { useToast } from "@/hooks/use-toast";
 import {
   User,
   Shield,
@@ -10,6 +22,10 @@ import {
   LogOut,
   ChevronRight,
   Camera,
+  Mail,
+  Phone,
+  Lock,
+  Fingerprint,
 } from "lucide-react";
 
 interface SettingsItemProps {
@@ -47,6 +63,42 @@ function SettingsItem({ icon, label, subtitle, onClick, danger }: SettingsItemPr
 }
 
 export default function Profile() {
+  const { toast } = useToast();
+  const [personalInfoOpen, setPersonalInfoOpen] = useState(false);
+  const [securityOpen, setSecurityOpen] = useState(false);
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [logoutConfirmOpen, setLogoutConfirmOpen] = useState(false);
+
+  // Form states
+  const [name, setName] = useState("James Ochieng");
+  const [email, setEmail] = useState("james.ochieng@mak.ac.ug");
+  const [phone, setPhone] = useState("0770 123 456");
+
+  // Security states
+  const [biometrics, setBiometrics] = useState(true);
+  const [twoFactor, setTwoFactor] = useState(false);
+
+  // Notification states
+  const [pushEnabled, setPushEnabled] = useState(true);
+  const [emailAlerts, setEmailAlerts] = useState(true);
+  const [budgetAlerts, setBudgetAlerts] = useState(true);
+
+  const handleSavePersonalInfo = () => {
+    setPersonalInfoOpen(false);
+    toast({
+      title: "Profile Updated",
+      description: "Your personal information has been saved.",
+    });
+  };
+
+  const handleLogout = () => {
+    setLogoutConfirmOpen(false);
+    toast({
+      title: "Logged Out",
+      description: "You have been successfully logged out.",
+    });
+  };
+
   return (
     <div className="min-h-screen bg-background pb-24">
       {/* Header */}
@@ -65,8 +117,8 @@ export default function Profile() {
               </button>
             </div>
             <div className="flex-1">
-              <h2 className="font-bold text-foreground text-lg">James Ochieng</h2>
-              <p className="text-sm text-muted-foreground">james.ochieng@mak.ac.ug</p>
+              <h2 className="font-bold text-foreground text-lg">{name}</h2>
+              <p className="text-sm text-muted-foreground">{email}</p>
               <p className="text-xs text-muted-foreground mt-0.5">
                 Makerere University • Year 3
               </p>
@@ -87,18 +139,21 @@ export default function Profile() {
               icon={<User className="h-5 w-5" />}
               label="Personal Information"
               subtitle="Name, email, phone number"
+              onClick={() => setPersonalInfoOpen(true)}
             />
             <div className="h-px bg-border mx-4" />
             <SettingsItem
               icon={<Shield className="h-5 w-5" />}
               label="Security"
               subtitle="Password, PIN, biometrics"
+              onClick={() => setSecurityOpen(true)}
             />
             <div className="h-px bg-border mx-4" />
             <SettingsItem
               icon={<CreditCard className="h-5 w-5" />}
               label="Payment Methods"
               subtitle="Mobile money, bank accounts"
+              onClick={() => toast({ title: "Coming Soon", description: "Payment methods management will be available soon." })}
             />
           </div>
         </section>
@@ -113,6 +168,7 @@ export default function Profile() {
               icon={<Bell className="h-5 w-5" />}
               label="Notifications"
               subtitle="Push, email, SMS alerts"
+              onClick={() => setNotificationsOpen(true)}
             />
           </div>
         </section>
@@ -127,12 +183,14 @@ export default function Profile() {
               icon={<HelpCircle className="h-5 w-5" />}
               label="Help Center"
               subtitle="FAQs, contact support"
+              onClick={() => toast({ title: "Help Center", description: "Opening help center..." })}
             />
             <div className="h-px bg-border mx-4" />
             <SettingsItem
               icon={<FileText className="h-5 w-5" />}
               label="Terms & Privacy"
               subtitle="Legal documents"
+              onClick={() => toast({ title: "Legal", description: "Opening terms and privacy policy..." })}
             />
           </div>
         </section>
@@ -144,6 +202,7 @@ export default function Profile() {
               icon={<LogOut className="h-5 w-5" />}
               label="Log Out"
               danger
+              onClick={() => setLogoutConfirmOpen(true)}
             />
           </div>
         </section>
@@ -153,6 +212,149 @@ export default function Profile() {
           BudgetWise v1.0.0
         </p>
       </main>
+
+      {/* Personal Information Dialog */}
+      <Dialog open={personalInfoOpen} onOpenChange={setPersonalInfoOpen}>
+        <DialogContent className="sm:max-w-md mx-4 rounded-2xl">
+          <DialogHeader>
+            <DialogTitle>Personal Information</DialogTitle>
+            <DialogDescription>Update your profile details</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 pt-4">
+            <div className="space-y-2">
+              <Label htmlFor="name">Full Name</Label>
+              <div className="relative">
+                <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="phone">Phone Number</Label>
+              <div className="relative">
+                <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="phone"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+            </div>
+            <Button variant="action" className="w-full" onClick={handleSavePersonalInfo}>
+              Save Changes
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Security Dialog */}
+      <Dialog open={securityOpen} onOpenChange={setSecurityOpen}>
+        <DialogContent className="sm:max-w-md mx-4 rounded-2xl">
+          <DialogHeader>
+            <DialogTitle>Security Settings</DialogTitle>
+            <DialogDescription>Manage your account security</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 pt-4">
+            <Button variant="outline" className="w-full justify-start gap-3">
+              <Lock className="h-4 w-4" />
+              Change Password
+            </Button>
+            <Button variant="outline" className="w-full justify-start gap-3">
+              <Lock className="h-4 w-4" />
+              Change PIN
+            </Button>
+            <div className="flex items-center justify-between p-4 bg-muted/50 rounded-xl">
+              <div className="flex items-center gap-3">
+                <Fingerprint className="h-5 w-5 text-primary" />
+                <div>
+                  <p className="font-medium text-foreground">Biometric Login</p>
+                  <p className="text-xs text-muted-foreground">Use fingerprint or face ID</p>
+                </div>
+              </div>
+              <Switch checked={biometrics} onCheckedChange={setBiometrics} />
+            </div>
+            <div className="flex items-center justify-between p-4 bg-muted/50 rounded-xl">
+              <div className="flex items-center gap-3">
+                <Shield className="h-5 w-5 text-primary" />
+                <div>
+                  <p className="font-medium text-foreground">Two-Factor Auth</p>
+                  <p className="text-xs text-muted-foreground">Extra security layer</p>
+                </div>
+              </div>
+              <Switch checked={twoFactor} onCheckedChange={setTwoFactor} />
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Notifications Dialog */}
+      <Dialog open={notificationsOpen} onOpenChange={setNotificationsOpen}>
+        <DialogContent className="sm:max-w-md mx-4 rounded-2xl">
+          <DialogHeader>
+            <DialogTitle>Notification Preferences</DialogTitle>
+            <DialogDescription>Manage how you receive alerts</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 pt-4">
+            <div className="flex items-center justify-between p-4 bg-muted/50 rounded-xl">
+              <div>
+                <p className="font-medium text-foreground">Push Notifications</p>
+                <p className="text-xs text-muted-foreground">Receive alerts on your phone</p>
+              </div>
+              <Switch checked={pushEnabled} onCheckedChange={setPushEnabled} />
+            </div>
+            <div className="flex items-center justify-between p-4 bg-muted/50 rounded-xl">
+              <div>
+                <p className="font-medium text-foreground">Email Alerts</p>
+                <p className="text-xs text-muted-foreground">Weekly summaries & updates</p>
+              </div>
+              <Switch checked={emailAlerts} onCheckedChange={setEmailAlerts} />
+            </div>
+            <div className="flex items-center justify-between p-4 bg-muted/50 rounded-xl">
+              <div>
+                <p className="font-medium text-foreground">Budget Alerts</p>
+                <p className="text-xs text-muted-foreground">Notify when nearing limits</p>
+              </div>
+              <Switch checked={budgetAlerts} onCheckedChange={setBudgetAlerts} />
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Logout Confirmation Dialog */}
+      <Dialog open={logoutConfirmOpen} onOpenChange={setLogoutConfirmOpen}>
+        <DialogContent className="sm:max-w-sm mx-4 rounded-2xl">
+          <DialogHeader>
+            <DialogTitle>Log Out</DialogTitle>
+            <DialogDescription>Are you sure you want to log out of your account?</DialogDescription>
+          </DialogHeader>
+          <div className="flex gap-3 pt-4">
+            <Button variant="outline" className="flex-1" onClick={() => setLogoutConfirmOpen(false)}>
+              Cancel
+            </Button>
+            <Button variant="destructive" className="flex-1" onClick={handleLogout}>
+              Log Out
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       <BottomNavigation />
     </div>
