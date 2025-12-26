@@ -1,16 +1,21 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { BalanceCard } from "@/components/BalanceCard";
 import { BudgetCard } from "@/components/BudgetCard";
 import { QuickActions } from "@/components/QuickActions";
 import { TransactionItem, Transaction } from "@/components/TransactionItem";
+import { DepositModal } from "@/components/DepositModal";
+import { WithdrawModal } from "@/components/WithdrawModal";
+import { SetBudgetModal } from "@/components/SetBudgetModal";
+import { NotificationsDropdown } from "@/components/NotificationsDropdown";
+import { BottomNavigation } from "@/components/BottomNavigation";
 import { 
   Utensils, 
   Car, 
   Book, 
   ShoppingBag, 
-  Coffee, 
-  Bell 
+  Coffee,
 } from "lucide-react";
-import { BottomNavigation } from "@/components/BottomNavigation";
 
 const mockBudgets = [
   { category: "Food & Dining", icon: <Utensils className="h-5 w-5" />, spent: 145000, budget: 200000 },
@@ -58,6 +63,13 @@ const mockTransactions: Transaction[] = [
 ];
 
 export default function Dashboard() {
+  const navigate = useNavigate();
+  const [depositOpen, setDepositOpen] = useState(false);
+  const [withdrawOpen, setWithdrawOpen] = useState(false);
+  const [budgetOpen, setBudgetOpen] = useState(false);
+
+  const withdrawableBalance = 125000;
+
   return (
     <div className="min-h-screen bg-background pb-24">
       {/* Header */}
@@ -67,10 +79,7 @@ export default function Dashboard() {
             <p className="text-primary-foreground/80 text-sm">Good morning,</p>
             <h1 className="text-xl font-bold text-primary-foreground">James Ochieng</h1>
           </div>
-          <button className="relative p-2 rounded-xl bg-white/10 hover:bg-white/20 transition-colors">
-            <Bell className="h-5 w-5 text-primary-foreground" />
-            <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-success rounded-full" />
-          </button>
+          <NotificationsDropdown />
         </div>
 
         {/* Balance Cards */}
@@ -83,7 +92,7 @@ export default function Dashboard() {
           />
           <BalanceCard
             title="Withdrawable Savings"
-            amount={125000}
+            amount={withdrawableBalance}
             subtitle="From unused budgets"
             variant="secondary"
             showGrowth
@@ -99,7 +108,11 @@ export default function Dashboard() {
           <h2 className="text-sm font-semibold text-muted-foreground mb-3 uppercase tracking-wide">
             Quick Actions
           </h2>
-          <QuickActions />
+          <QuickActions
+            onDeposit={() => setDepositOpen(true)}
+            onSetBudget={() => setBudgetOpen(true)}
+            onWithdraw={() => setWithdrawOpen(true)}
+          />
         </section>
 
         {/* Budget Overview */}
@@ -108,7 +121,10 @@ export default function Dashboard() {
             <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
               Budget Overview
             </h2>
-            <button className="text-sm font-medium text-primary hover:underline">
+            <button 
+              onClick={() => navigate("/budget")}
+              className="text-sm font-medium text-primary hover:underline"
+            >
               View All
             </button>
           </div>
@@ -131,7 +147,10 @@ export default function Dashboard() {
             <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
               Recent Activity
             </h2>
-            <button className="text-sm font-medium text-primary hover:underline">
+            <button 
+              onClick={() => navigate("/wallet")}
+              className="text-sm font-medium text-primary hover:underline"
+            >
               See All
             </button>
           </div>
@@ -142,6 +161,15 @@ export default function Dashboard() {
           </div>
         </section>
       </main>
+
+      {/* Modals */}
+      <DepositModal open={depositOpen} onOpenChange={setDepositOpen} />
+      <WithdrawModal 
+        open={withdrawOpen} 
+        onOpenChange={setWithdrawOpen} 
+        availableBalance={withdrawableBalance}
+      />
+      <SetBudgetModal open={budgetOpen} onOpenChange={setBudgetOpen} />
 
       <BottomNavigation />
     </div>

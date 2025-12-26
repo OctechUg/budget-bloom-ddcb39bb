@@ -1,5 +1,4 @@
 import { ArrowDownToLine, ArrowUpFromLine, Target } from "lucide-react";
-import { Button } from "./ui/button";
 import { cn } from "@/lib/utils";
 
 interface QuickActionProps {
@@ -35,23 +34,32 @@ function QuickAction({ icon, label, onClick, variant = "primary" }: QuickActionP
   );
 }
 
-export function QuickActions() {
+interface QuickActionsProps {
+  onDeposit: () => void;
+  onSetBudget: () => void;
+  onWithdraw: () => void;
+}
+
+export function QuickActions({ onDeposit, onSetBudget, onWithdraw }: QuickActionsProps) {
   return (
     <div className="grid grid-cols-3 gap-3">
       <QuickAction
         icon={<ArrowDownToLine className="h-5 w-5" />}
         label="Deposit"
         variant="primary"
+        onClick={onDeposit}
       />
       <QuickAction
         icon={<Target className="h-5 w-5" />}
         label="Set Budget"
         variant="secondary"
+        onClick={onSetBudget}
       />
       <QuickAction
         icon={<ArrowUpFromLine className="h-5 w-5" />}
         label="Withdraw"
         variant="success"
+        onClick={onWithdraw}
       />
     </div>
   );

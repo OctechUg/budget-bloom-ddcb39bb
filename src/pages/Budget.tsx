@@ -1,5 +1,7 @@
+import { useState } from "react";
 import { BottomNavigation } from "@/components/BottomNavigation";
 import { BudgetCard } from "@/components/BudgetCard";
+import { SetBudgetModal } from "@/components/SetBudgetModal";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import {
@@ -25,6 +27,8 @@ const budgetCategories = [
 ];
 
 export default function Budget() {
+  const [budgetModalOpen, setBudgetModalOpen] = useState(false);
+
   const totalBudget = budgetCategories.reduce((sum, b) => sum + b.budget, 0);
   const totalSpent = budgetCategories.reduce((sum, b) => sum + b.spent, 0);
   const overallPercentage = (totalSpent / totalBudget) * 100;
@@ -44,7 +48,11 @@ export default function Budget() {
       <header className="bg-card px-4 pt-12 pb-6 border-b border-border">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-bold text-foreground">Budgets</h1>
-          <Button variant="action" size="sm">
+          <Button 
+            variant="action" 
+            size="sm"
+            onClick={() => setBudgetModalOpen(true)}
+          >
             <Plus className="h-4 w-4" />
             New Budget
           </Button>
@@ -106,6 +114,9 @@ export default function Budget() {
           </p>
         </div>
       </main>
+
+      {/* Modal */}
+      <SetBudgetModal open={budgetModalOpen} onOpenChange={setBudgetModalOpen} />
 
       <BottomNavigation />
     </div>

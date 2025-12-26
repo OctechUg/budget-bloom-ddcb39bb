@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { BottomNavigation } from "@/components/BottomNavigation";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, TrendingUp, TrendingDown } from "lucide-react";
@@ -20,7 +21,14 @@ const categoryBreakdown = [
   { name: "Others", amount: 45000, percentage: 9, color: "bg-muted" },
 ];
 
+const months = [
+  "January 2025", "February 2025", "March 2025", "April 2025",
+  "May 2025", "June 2025", "July 2025", "August 2025",
+  "September 2025", "October 2025", "November 2025", "December 2025"
+];
+
 export default function Reports() {
+  const [currentMonthIndex, setCurrentMonthIndex] = useState(11); // December
   const maxAmount = Math.max(...spendingData.map((d) => d.amount));
 
   const formatCurrency = (value: number) => {
@@ -32,6 +40,14 @@ export default function Reports() {
     }).format(value);
   };
 
+  const handlePrevMonth = () => {
+    setCurrentMonthIndex((prev) => (prev > 0 ? prev - 1 : prev));
+  };
+
+  const handleNextMonth = () => {
+    setCurrentMonthIndex((prev) => (prev < months.length - 1 ? prev + 1 : prev));
+  };
+
   return (
     <div className="min-h-screen bg-background pb-24">
       {/* Header */}
@@ -40,11 +56,21 @@ export default function Reports() {
 
         {/* Month Selector */}
         <div className="flex items-center justify-between bg-muted rounded-xl p-2">
-          <Button variant="ghost" size="icon-lg">
+          <Button 
+            variant="ghost" 
+            size="icon"
+            onClick={handlePrevMonth}
+            disabled={currentMonthIndex === 0}
+          >
             <ChevronLeft className="h-5 w-5" />
           </Button>
-          <span className="font-semibold text-foreground">December 2025</span>
-          <Button variant="ghost" size="icon-lg">
+          <span className="font-semibold text-foreground">{months[currentMonthIndex]}</span>
+          <Button 
+            variant="ghost" 
+            size="icon"
+            onClick={handleNextMonth}
+            disabled={currentMonthIndex === months.length - 1}
+          >
             <ChevronRight className="h-5 w-5" />
           </Button>
         </div>
