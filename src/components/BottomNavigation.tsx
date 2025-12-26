@@ -4,10 +4,10 @@ import { cn } from "@/lib/utils";
 
 const navItems = [
   { icon: Home, label: "Home", path: "/" },
-  { icon: Wallet, label: "Bulk", path: "/budget" },
-  { icon: null, label: "Pay", path: "/wallet", isCenter: true },
-  { icon: RefreshCw, label: "Reversal", path: "/reports" },
-  { icon: FileText, label: "Transactions", path: "/profile" },
+  { icon: Wallet, label: "Wallet", path: "/wallet" },
+  { icon: BarChart3, label: "Budget", path: "/budget" },
+  { icon: RefreshCw, label: "Reports", path: "/reports" },
+  { icon: FileText, label: "Profile", path: "/profile" },
 ];
 
 export function BottomNavigation() {
@@ -18,22 +18,8 @@ export function BottomNavigation() {
       <div className="max-w-md mx-auto flex items-center justify-around py-2 px-4">
         {navItems.map((item) => {
           const isActive = location.pathname === item.path;
+          const Icon = item.icon;
           
-          if (item.isCenter) {
-            return (
-              <Link
-                key={item.path}
-                to={item.path}
-                className="relative -mt-6"
-              >
-                <div className="w-14 h-14 rounded-full gradient-primary shadow-glow flex items-center justify-center">
-                  <Wallet className="h-6 w-6 text-primary-foreground" />
-                </div>
-              </Link>
-            );
-          }
-          
-          const Icon = item.icon!;
           return (
             <Link
               key={item.path}
