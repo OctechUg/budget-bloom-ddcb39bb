@@ -7,6 +7,7 @@ import { TransactionItem, Transaction } from "@/components/TransactionItem";
 import { DepositModal } from "@/components/DepositModal";
 import { WithdrawModal } from "@/components/WithdrawModal";
 import { SetBudgetModal } from "@/components/SetBudgetModal";
+import { QuickServices } from "@/components/QuickServices";
 import { NotificationsDropdown } from "@/components/NotificationsDropdown";
 import { BottomNavigation } from "@/components/BottomNavigation";
 import { useAuth } from "@/hooks/useAuth";
@@ -131,7 +132,15 @@ export default function Dashboard() {
           />
         </section>
 
-        {/* Promo Banner */}
+        {/* Quick Services */}
+        <section className="animate-fade-in" style={{ animationDelay: "0.15s" }}>
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
+              Quick Services
+            </h2>
+          </div>
+          <QuickServices />
+        </section>
         {showPromo && (
           <section className="animate-fade-in" style={{ animationDelay: "0.15s" }}>
             <div className="relative glass-card rounded-2xl p-4 flex items-center gap-3 overflow-hidden">
