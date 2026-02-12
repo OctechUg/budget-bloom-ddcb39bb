@@ -307,11 +307,11 @@ export default function Profile() {
             <DialogDescription>Manage your account security</DialogDescription>
           </DialogHeader>
           <div className="space-y-4 pt-4">
-            <Button variant="outline" className="w-full justify-start gap-3">
+            <Button variant="outline" className="w-full justify-start gap-3" onClick={() => toast({ title: "Change Password", description: "A password reset link has been sent to your email." })}>
               <Lock className="h-4 w-4" />
               Change Password
             </Button>
-            <Button variant="outline" className="w-full justify-start gap-3">
+            <Button variant="outline" className="w-full justify-start gap-3" onClick={() => toast({ title: "Change PIN", description: "PIN change feature coming soon." })}>
               <Lock className="h-4 w-4" />
               Change PIN
             </Button>

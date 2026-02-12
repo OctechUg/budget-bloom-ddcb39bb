@@ -4,8 +4,15 @@ import { BalanceCard } from "@/components/BalanceCard";
 import { TransactionItem, Transaction } from "@/components/TransactionItem";
 import { DepositModal } from "@/components/DepositModal";
 import { WithdrawModal } from "@/components/WithdrawModal";
+import { useToast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
 import { Search, ChevronDown } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const mockTransactions: Transaction[] = [
   {
@@ -66,6 +73,7 @@ export default function Wallet() {
   const [statusFilter, setStatusFilter] = useState("All Status");
 
   const withdrawableBalance = 125000;
+  const { toast } = useToast();
 
   const filteredTransactions = mockTransactions.filter((t) => {
     const matchesSearch = t.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -79,11 +87,17 @@ export default function Wallet() {
       {/* Header */}
       <header className="px-4 pt-12 pb-6">
         <div className="flex items-center justify-between mb-6">
-          <button className="w-10 h-10 rounded-full border border-border flex items-center justify-center text-muted-foreground">
+          <button 
+            onClick={() => window.history.back()}
+            className="w-10 h-10 rounded-full border border-border flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
+          >
             ‹
           </button>
           <h1 className="text-lg font-semibold text-foreground">Transaction</h1>
-          <button className="w-10 h-10 rounded-full border border-border flex items-center justify-center text-muted-foreground">
+          <button 
+            onClick={() => toast({ title: "Transaction Info", description: "View and manage all your transactions. Use filters to find specific entries." })}
+            className="w-10 h-10 rounded-full border border-border flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
+          >
             ⓘ
           </button>
         </div>
@@ -101,14 +115,33 @@ export default function Wallet() {
 
         {/* Filter Tabs */}
         <div className="flex gap-2">
-          <button className="flex-1 flex items-center justify-between px-4 py-3 rounded-xl bg-muted/50 border border-border text-sm text-foreground">
-            <span>All types</span>
-            <ChevronDown className="h-4 w-4 text-muted-foreground" />
-          </button>
-          <button className="flex-1 flex items-center justify-between px-4 py-3 rounded-xl bg-muted/50 border border-border text-sm text-foreground">
-            <span>{statusFilter}</span>
-            <ChevronDown className="h-4 w-4 text-muted-foreground" />
-          </button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="flex-1 flex items-center justify-between px-4 py-3 rounded-xl bg-muted/50 border border-border text-sm text-foreground">
+                <span>{filterType === "all" ? "All types" : filterType.charAt(0).toUpperCase() + filterType.slice(1)}</span>
+                <ChevronDown className="h-4 w-4 text-muted-foreground" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-48">
+              <DropdownMenuItem onClick={() => setFilterType("all")}>All types</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setFilterType("income")}>Income</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setFilterType("expense")}>Expense</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setFilterType("blocked")}>Blocked</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="flex-1 flex items-center justify-between px-4 py-3 rounded-xl bg-muted/50 border border-border text-sm text-foreground">
+                <span>{statusFilter}</span>
+                <ChevronDown className="h-4 w-4 text-muted-foreground" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48">
+              <DropdownMenuItem onClick={() => setStatusFilter("All Status")}>All Status</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setStatusFilter("Completed")}>Completed</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setStatusFilter("Pending")}>Pending</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </header>
 

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Popover,
   PopoverContent,
@@ -43,7 +44,12 @@ const mockNotifications: Notification[] = [
 ];
 
 export function NotificationsDropdown() {
-  const unreadCount = mockNotifications.filter((n) => !n.read).length;
+  const [notifications, setNotifications] = useState(mockNotifications);
+  const unreadCount = notifications.filter((n) => !n.read).length;
+
+  const markAllRead = () => {
+    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+  };
 
   const getIcon = (type: string) => {
     switch (type) {
@@ -85,7 +91,7 @@ export function NotificationsDropdown() {
           </p>
         </div>
         <div className="max-h-80 overflow-y-auto">
-          {mockNotifications.map((notification) => (
+          {notifications.map((notification) => (
             <div
               key={notification.id}
               className={cn(
@@ -119,8 +125,11 @@ export function NotificationsDropdown() {
           ))}
         </div>
         <div className="p-3 border-t border-border">
-          <button className="w-full text-center text-sm font-medium text-primary hover:underline">
-            View All Notifications
+          <button 
+            onClick={markAllRead}
+            className="w-full text-center text-sm font-medium text-primary hover:underline"
+          >
+            Mark All as Read
           </button>
         </div>
       </PopoverContent>
