@@ -12,6 +12,7 @@ import { NotificationsDropdown } from "@/components/NotificationsDropdown";
 import { BottomNavigation } from "@/components/BottomNavigation";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 import { 
   Utensils, 
   Car, 
@@ -76,6 +77,7 @@ export default function Dashboard() {
   const [withdrawOpen, setWithdrawOpen] = useState(false);
   const [budgetOpen, setBudgetOpen] = useState(false);
   const [showPromo, setShowPromo] = useState(true);
+  const { toast } = useToast();
 
   const withdrawableBalance = 125000;
   const displayName = user?.email?.split("@")[0] || "Guest";
@@ -104,7 +106,12 @@ export default function Dashboard() {
                 </Button>
               </Link>
             )}
-            <button className="w-10 h-10 rounded-full border border-border flex items-center justify-center text-muted-foreground hover:text-foreground hover:border-primary/50 transition-all">
+            <button 
+              onClick={() => {
+                toast({ title: "Refreshed", description: "Your dashboard is up to date." });
+              }}
+              className="w-10 h-10 rounded-full border border-border flex items-center justify-center text-muted-foreground hover:text-foreground hover:border-primary/50 transition-all"
+            >
               <RefreshCw className="h-4 w-4" />
             </button>
             <NotificationsDropdown />
@@ -152,10 +159,17 @@ export default function Dashboard() {
                 <p className="text-xs text-muted-foreground">Refer a friend and earn rewards</p>
               </div>
               <button 
-                onClick={() => setShowPromo(false)}
-                className="w-8 h-8 rounded-full bg-muted/50 flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
+                onClick={() => {
+                  if (navigator.share) {
+                    navigator.share({ title: "BudgetWise", text: "Check out BudgetWise - the smart budgeting app for students!", url: window.location.origin });
+                  } else {
+                    navigator.clipboard.writeText(window.location.origin);
+                    toast({ title: "Link Copied!", description: "Share link copied to clipboard." });
+                  }
+                }}
+                className="px-3 py-1.5 rounded-lg bg-primary/20 text-primary text-xs font-semibold hover:bg-primary/30 transition-colors shrink-0"
               >
-                <X className="h-4 w-4" />
+                Share
               </button>
             </div>
           </section>
