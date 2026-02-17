@@ -7,6 +7,7 @@ import { TransactionItem, Transaction } from "@/components/TransactionItem";
 import { DepositModal } from "@/components/DepositModal";
 import { WithdrawModal } from "@/components/WithdrawModal";
 import { SetBudgetModal } from "@/components/SetBudgetModal";
+import { TransferModal } from "@/components/TransferModal";
 import { QuickServices } from "@/components/QuickServices";
 import { NotificationsDropdown } from "@/components/NotificationsDropdown";
 import { BottomNavigation } from "@/components/BottomNavigation";
@@ -76,10 +77,12 @@ export default function Dashboard() {
   const [depositOpen, setDepositOpen] = useState(false);
   const [withdrawOpen, setWithdrawOpen] = useState(false);
   const [budgetOpen, setBudgetOpen] = useState(false);
+  const [transferOpen, setTransferOpen] = useState(false);
+  const [walletBalance, setWalletBalance] = useState(485000);
   const [showPromo, setShowPromo] = useState(true);
   const { toast } = useToast();
 
-  const withdrawableBalance = 125000;
+  const withdrawableBalance = walletBalance;
   const displayName = user?.email?.split("@")[0] || "Guest";
 
   return (
@@ -121,7 +124,7 @@ export default function Dashboard() {
         {/* Balance Card */}
         <BalanceCard
           title="Wallet Balance"
-          amount={485000}
+          amount={walletBalance}
           subtitle="Available for budgeting"
           showGrowth
           growthPercentage={12}
@@ -136,6 +139,7 @@ export default function Dashboard() {
             onDeposit={() => setDepositOpen(true)}
             onSetBudget={() => setBudgetOpen(true)}
             onWithdraw={() => setWithdrawOpen(true)}
+            onTransfer={() => setTransferOpen(true)}
           />
         </section>
 
@@ -230,6 +234,12 @@ export default function Dashboard() {
         availableBalance={withdrawableBalance}
       />
       <SetBudgetModal open={budgetOpen} onOpenChange={setBudgetOpen} />
+      <TransferModal
+        open={transferOpen}
+        onOpenChange={setTransferOpen}
+        availableBalance={walletBalance}
+        onTransfer={(amount) => setWalletBalance((prev) => prev - amount)}
+      />
 
       <BottomNavigation />
     </div>
