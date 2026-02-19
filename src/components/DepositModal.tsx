@@ -71,7 +71,7 @@ export function DepositModal({ open, onOpenChange }: DepositModalProps) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md mx-4 rounded-2xl">
+      <DialogContent className="sm:max-w-md rounded-2xl">
         <DialogHeader>
           <DialogTitle className="text-xl">Deposit Funds</DialogTitle>
           <DialogDescription>

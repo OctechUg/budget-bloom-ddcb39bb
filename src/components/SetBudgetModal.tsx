@@ -85,7 +85,7 @@ export function SetBudgetModal({ open, onOpenChange }: SetBudgetModalProps) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md mx-4 rounded-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-md rounded-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-xl">Set Budget</DialogTitle>
           <DialogDescription>
