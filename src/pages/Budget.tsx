@@ -42,18 +42,18 @@ const initialCategories: Category[] = [
 ];
 
 const mockTransactions: Tx[] = [
-  { id:"t1", categoryId:"food",    vendor:"Cafe Java",         date:"19 Feb", amount:18000 },
-  { id:"t2", categoryId:"food",    vendor:"Cafeteria – MAK",   date:"18 Feb", amount:12000 },
-  { id:"t3", categoryId:"food",    vendor:"Nandos",            date:"17 Feb", amount:35000 },
-  { id:"t4", categoryId:"trans",   vendor:"SafeBoda",          date:"19 Feb", amount:8000  },
-  { id:"t5", categoryId:"trans",   vendor:"UMA Bus",           date:"18 Feb", amount:4500  },
-  { id:"t6", categoryId:"books",   vendor:"Aristoc Booklex",   date:"15 Feb", amount:22000 },
-  { id:"t7", categoryId:"shop",    vendor:"Shoprite",          date:"16 Feb", amount:55000 },
-  { id:"t8", categoryId:"shop",    vendor:"Quality Supermarket",date:"14 Feb",amount:38000 },
-  { id:"t9", categoryId:"enter",   vendor:"Netflix",           date:"12 Feb", amount:15000 },
-  { id:"t10",categoryId:"util",    vendor:"UMEME",             date:"10 Feb", amount:20000 },
-  { id:"t11",categoryId:"airtime", vendor:"MTN MoMo",          date:"19 Feb", amount:20000 },
-  { id:"t12",categoryId:"airtime", vendor:"Airtel",            date:"13 Feb", amount:10000 },
+  { id:"t1",  categoryId:"food",    vendor:"Cafe Java",          date:"19 Feb", amount:18000 },
+  { id:"t2",  categoryId:"food",    vendor:"Cafeteria – MAK",    date:"18 Feb", amount:12000 },
+  { id:"t3",  categoryId:"food",    vendor:"Nandos",             date:"17 Feb", amount:35000 },
+  { id:"t4",  categoryId:"trans",   vendor:"SafeBoda",           date:"19 Feb", amount:8000  },
+  { id:"t5",  categoryId:"trans",   vendor:"UMA Bus",            date:"18 Feb", amount:4500  },
+  { id:"t6",  categoryId:"books",   vendor:"Aristoc Booklex",    date:"15 Feb", amount:22000 },
+  { id:"t7",  categoryId:"shop",    vendor:"Shoprite",           date:"16 Feb", amount:55000 },
+  { id:"t8",  categoryId:"shop",    vendor:"Quality Supermarket",date:"14 Feb", amount:38000 },
+  { id:"t9",  categoryId:"enter",   vendor:"Netflix",            date:"12 Feb", amount:15000 },
+  { id:"t10", categoryId:"util",    vendor:"UMEME",              date:"10 Feb", amount:20000 },
+  { id:"t11", categoryId:"airtime", vendor:"MTN MoMo",           date:"19 Feb", amount:20000 },
+  { id:"t12", categoryId:"airtime", vendor:"Airtel",             date:"13 Feb", amount:10000 },
 ];
 
 const trendData = [
@@ -125,10 +125,7 @@ function ProgressBar({ pct, status }: { pct: number; status: Status }) {
 }
 
 function CategoryCard({
-  cat,
-  onSelect,
-  onEdit,
-  onDelete,
+  cat, onSelect, onEdit, onDelete,
 }: {
   cat: Category;
   onSelect: () => void;
@@ -141,7 +138,6 @@ function CategoryCard({
 
   return (
     <div className="glass-card rounded-2xl p-4 space-y-3">
-      {/* header */}
       <div className="flex items-start justify-between">
         <button onClick={onSelect} className="flex items-center gap-3 flex-1 text-left group">
           <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center text-muted-foreground shrink-0">
@@ -167,11 +163,7 @@ function CategoryCard({
           <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/50" />
         </div>
       </div>
-
-      {/* progress */}
       <ProgressBar pct={pct} status={status} />
-
-      {/* footer */}
       <div className="flex justify-between text-[11px]">
         <span className="text-muted-foreground">{pct.toFixed(0)}% used</span>
         <span className={statusText[status]}>
@@ -182,13 +174,7 @@ function CategoryCard({
   );
 }
 
-function TxDrillDown({
-  cat,
-  onClose,
-}: {
-  cat: Category;
-  onClose: () => void;
-}) {
+function TxDrillDown({ cat, onClose }: { cat: Category; onClose: () => void }) {
   const [search, setSearch] = useState("");
   const txs = mockTransactions
     .filter(t => t.categoryId === cat.id)
@@ -207,8 +193,6 @@ function TxDrillDown({
           <X className="h-4 w-4" />
         </button>
       </div>
-
-      {/* search */}
       <div className="relative">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
         <input
@@ -218,8 +202,6 @@ function TxDrillDown({
           className="w-full pl-8 pr-3 py-2 text-xs bg-muted border border-border/60 rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-border"
         />
       </div>
-
-      {/* tx list */}
       <div className="space-y-2">
         {txs.length === 0 && (
           <p className="text-xs text-muted-foreground text-center py-4">No transactions found.</p>
@@ -240,19 +222,26 @@ function TxDrillDown({
   );
 }
 
-// ─── alerts ───────────────────────────────────────────────────────────────────
 function SmartAlerts({ categories }: { categories: Category[] }) {
   const alerts: { id: string; level: "warn" | "crit" | "over"; text: string }[] = [];
   categories.forEach(c => {
     const pct = (c.spent / c.budget) * 100;
-    if (pct >= 100) alerts.push({ id: c.id, level: "over",  text: `${c.category} is over budget.` });
-    else if (pct >= 90) alerts.push({ id: c.id, level: "crit", text: `${c.category} is at ${pct.toFixed(0)}% — critical.` });
-    else if (pct >= 75) alerts.push({ id: c.id, level: "warn", text: `${c.category} has reached ${pct.toFixed(0)}% — nearing limit.` });
+    if (pct >= 100)      alerts.push({ id: c.id, level: "over",  text: `${c.category} is over budget.` });
+    else if (pct >= 90)  alerts.push({ id: c.id, level: "crit",  text: `${c.category} is at ${pct.toFixed(0)}% — critical.` });
+    else if (pct >= 75)  alerts.push({ id: c.id, level: "warn",  text: `${c.category} has reached ${pct.toFixed(0)}% — nearing limit.` });
   });
   if (alerts.length === 0) return null;
 
-  const icon = { warn: <AlertTriangle className="h-3.5 w-3.5" />, crit: <AlertCircle className="h-3.5 w-3.5" />, over: <AlertCircle className="h-3.5 w-3.5" /> };
-  const border = { warn: "border-muted-foreground/30", crit: "border-muted-foreground/60", over: "border-foreground/60" };
+  const icon = {
+    warn: <AlertTriangle className="h-3.5 w-3.5" />,
+    crit: <AlertCircle className="h-3.5 w-3.5" />,
+    over: <AlertCircle className="h-3.5 w-3.5" />,
+  };
+  const border = {
+    warn: "border-muted-foreground/30",
+    crit: "border-muted-foreground/60",
+    over: "border-foreground/60",
+  };
 
   return (
     <div className="space-y-2">
@@ -272,18 +261,17 @@ export default function Budget() {
   const [budgetModalOpen, setBudgetModalOpen] = useState(false);
   const [selectedCat, setSelectedCat] = useState<Category | null>(null);
 
-  const totalBudget = categories.reduce((s, c) => s + c.budget, 0);
-  const totalSpent  = categories.reduce((s, c) => s + c.spent,  0);
-  const remaining   = totalBudget - totalSpent;
-  const overallPct  = (totalSpent / totalBudget) * 100;
+  const totalBudget   = categories.reduce((s, c) => s + c.budget, 0);
+  const totalSpent    = categories.reduce((s, c) => s + c.spent,  0);
+  const remaining     = totalBudget - totalSpent;
+  const overallPct    = (totalSpent / totalBudget) * 100;
   const overallStatus = getStatus(overallPct);
 
-  // daily suggestion (30-day month)
-  const daysLeft = 9; // mock: 9 days left in month
+  const daysLeft        = 9;
   const dailySuggestion = remaining > 0 ? Math.floor(remaining / daysLeft) : 0;
 
   const smartInsight =
-    overallPct < 60 ? "You are within safe spending range."
+    overallPct < 60  ? "You are within safe spending range."
     : overallPct < 80 ? "Spending is moderate — stay on track."
     : overallPct < 100 ? "You are approaching your monthly limit."
     : "Monthly budget exceeded. Review spending.";
@@ -298,7 +286,7 @@ export default function Budget() {
       <header className="px-4 pt-12 pb-4 max-w-5xl mx-auto">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-xl font-bold text-foreground tracking-tight">Budget Management</h1>
+            <h1 className="text-xl font-bold text-foreground tracking-tight">Budgeting</h1>
             <p className="text-xs text-muted-foreground mt-0.5">February 2026</p>
           </div>
           <Button size="sm" onClick={() => setBudgetModalOpen(true)} className="gap-1.5">
@@ -317,14 +305,13 @@ export default function Budget() {
             </div>
             <div className="text-right">
               <p className="text-[11px] text-muted-foreground uppercase tracking-widest font-medium">Remaining</p>
-              <p className={`text-xl font-bold mt-1 tabular-nums ${remaining < 0 ? "text-foreground" : "text-foreground"}`}>
-                {remaining < 0 ? "-" : ""}{fmt(remaining)}
+              <p className="text-xl font-bold mt-1 tabular-nums text-foreground">
+                {remaining < 0 ? "−" : ""}{fmt(remaining)}
               </p>
               <StatusPill status={overallStatus} />
             </div>
           </div>
 
-          {/* overall bar */}
           <div className="space-y-1.5">
             <ProgressBar pct={overallPct} status={overallStatus} />
             <div className="flex justify-between text-[11px] text-muted-foreground">
@@ -333,7 +320,6 @@ export default function Budget() {
             </div>
           </div>
 
-          {/* smart insight */}
           <div className="flex items-start gap-2 pt-1 border-t border-border/40">
             <Info className="h-3.5 w-3.5 text-muted-foreground shrink-0 mt-0.5" />
             <p className="text-[11px] text-muted-foreground">{smartInsight}</p>
@@ -361,6 +347,42 @@ export default function Budget() {
           </div>
         </div>
 
+        {/* ── categories ── */}
+        <section>
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
+              Categories
+            </h2>
+            <span className="text-[11px] text-muted-foreground">{categories.length} total</span>
+          </div>
+
+          <div className="space-y-3">
+            {categories.map(cat => (
+              <div key={cat.id}>
+                <CategoryCard
+                  cat={cat}
+                  onSelect={() => setSelectedCat(selectedCat?.id === cat.id ? null : cat)}
+                  onEdit={() => setBudgetModalOpen(true)}
+                  onDelete={() => handleDelete(cat.id)}
+                />
+                {selectedCat?.id === cat.id && (
+                  <div className="mt-2">
+                    <TxDrillDown cat={cat} onClose={() => setSelectedCat(null)} />
+                  </div>
+                )}
+              </div>
+            ))}
+
+            <button
+              onClick={() => setBudgetModalOpen(true)}
+              className="w-full glass-card rounded-2xl p-4 border-dashed border-border/60 flex items-center justify-center gap-2 text-muted-foreground hover:text-foreground hover:border-border transition-all duration-200 text-xs font-medium"
+            >
+              <Plus className="h-4 w-4" />
+              Add New Category
+            </button>
+          </div>
+        </section>
+
         {/* ── spending trends ── */}
         <section>
           <h2 className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest mb-3">
@@ -379,7 +401,7 @@ export default function Budget() {
                   <LineChart data={trendData} margin={{ top: 4, right: 4, left: -24, bottom: 0 }}>
                     <XAxis dataKey="week" tick={{ fontSize: 10, fill: "hsl(155 15% 55%)" }} axisLine={false} tickLine={false} />
                     <YAxis tick={{ fontSize: 10, fill: "hsl(155 15% 55%)" }} axisLine={false} tickLine={false}
-                      tickFormatter={v => `${(v/1000).toFixed(0)}k`} />
+                      tickFormatter={v => `${(v / 1000).toFixed(0)}k`} />
                     <Tooltip
                       contentStyle={{ background: "hsl(155 35% 10%)", border: "1px solid hsl(155 30% 18%)", borderRadius: 8, fontSize: 11 }}
                       formatter={(v: number) => [`UGX ${v.toLocaleString()}`, "Spent"]}
@@ -426,44 +448,6 @@ export default function Budget() {
                 </div>
               </div>
             </div>
-          </div>
-        </section>
-
-        {/* ── categories ── */}
-        <section>
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
-              Categories
-            </h2>
-            <span className="text-[11px] text-muted-foreground">{categories.length} total</span>
-          </div>
-
-          <div className="space-y-3">
-            {categories.map(cat => (
-              <div key={cat.id}>
-                <CategoryCard
-                  cat={cat}
-                  onSelect={() => setSelectedCat(selectedCat?.id === cat.id ? null : cat)}
-                  onEdit={() => setBudgetModalOpen(true)}
-                  onDelete={() => handleDelete(cat.id)}
-                />
-                {/* drill-down inline */}
-                {selectedCat?.id === cat.id && (
-                  <div className="mt-2">
-                    <TxDrillDown cat={cat} onClose={() => setSelectedCat(null)} />
-                  </div>
-                )}
-              </div>
-            ))}
-
-            {/* add category shortcut */}
-            <button
-              onClick={() => setBudgetModalOpen(true)}
-              className="w-full glass-card rounded-2xl p-4 border-dashed border-border/60 flex items-center justify-center gap-2 text-muted-foreground hover:text-foreground hover:border-border transition-all duration-200 text-xs font-medium"
-            >
-              <Plus className="h-4 w-4" />
-              Add New Category
-            </button>
           </div>
         </section>
 
