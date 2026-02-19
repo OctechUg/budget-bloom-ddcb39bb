@@ -57,7 +57,7 @@ export function TransferModal({ open, onOpenChange, availableBalance, onTransfer
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="glass-card border-border max-w-sm mx-auto">
+      <DialogContent className="glass-card border-border max-w-sm rounded-2xl">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-foreground">
             <ArrowRightLeft className="h-5 w-5 text-primary" />
