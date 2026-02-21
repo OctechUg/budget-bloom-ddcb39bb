@@ -26,50 +26,9 @@ import {
   X,
 } from "lucide-react";
 
-const mockBudgets = [
-  { category: "Food & Dining", icon: <Utensils className="h-5 w-5" />, spent: 145000, budget: 200000 },
-  { category: "Transport", icon: <Car className="h-5 w-5" />, spent: 80000, budget: 80000 },
-  { category: "Books & Supplies", icon: <Book className="h-5 w-5" />, spent: 35000, budget: 100000 },
-  { category: "Shopping", icon: <ShoppingBag className="h-5 w-5" />, spent: 120000, budget: 150000 },
-];
+const mockBudgets: { category: string; icon: React.ReactNode; spent: number; budget: number }[] = [];
 
-const mockTransactions: Transaction[] = [
-  {
-    id: "1",
-    type: "expense",
-    category: "Food & Dining",
-    description: "Campus Cafeteria",
-    amount: 15000,
-    date: "Today",
-    icon: <Utensils className="h-4 w-4" />,
-  },
-  {
-    id: "2",
-    type: "blocked",
-    category: "Transport",
-    description: "Boda Boda Ride",
-    amount: 8000,
-    date: "Today",
-    icon: <Car className="h-4 w-4" />,
-  },
-  {
-    id: "3",
-    type: "income",
-    category: "Deposit",
-    description: "Mobile Money Deposit",
-    amount: 200000,
-    date: "Yesterday",
-  },
-  {
-    id: "4",
-    type: "expense",
-    category: "Food & Dining",
-    description: "Java House",
-    amount: 25000,
-    date: "Yesterday",
-    icon: <Coffee className="h-4 w-4" />,
-  },
-];
+const mockTransactions: Transaction[] = [];
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -78,7 +37,7 @@ export default function Dashboard() {
   const [withdrawOpen, setWithdrawOpen] = useState(false);
   const [budgetOpen, setBudgetOpen] = useState(false);
   const [transferOpen, setTransferOpen] = useState(false);
-  const [walletBalance, setWalletBalance] = useState(485000);
+  const [walletBalance, setWalletBalance] = useState(0);
   const [showPromo, setShowPromo] = useState(true);
   const { toast } = useToast();
 

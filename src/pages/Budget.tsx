@@ -31,37 +31,11 @@ interface Tx {
 }
 
 // ─── mock data ────────────────────────────────────────────────────────────────
-const initialCategories: Category[] = [
-  { id: "food",    category: "Food & Dining",   icon: <Utensils className="h-4 w-4" />, spent: 145000, budget: 200000 },
-  { id: "trans",   category: "Transport",        icon: <Car      className="h-4 w-4" />, spent: 80000,  budget: 80000  },
-  { id: "books",   category: "Books & Supplies", icon: <Book     className="h-4 w-4" />, spent: 35000,  budget: 100000 },
-  { id: "shop",    category: "Shopping",         icon: <ShoppingBag className="h-4 w-4" />, spent: 120000, budget: 150000 },
-  { id: "enter",   category: "Entertainment",    icon: <Gamepad2 className="h-4 w-4" />, spent: 25000,  budget: 50000  },
-  { id: "util",    category: "Utilities",        icon: <Lightbulb className="h-4 w-4" />, spent: 20000,  budget: 30000  },
-  { id: "airtime", category: "Airtime & Data",   icon: <Phone    className="h-4 w-4" />, spent: 40000,  budget: 60000  },
-];
+const initialCategories: Category[] = [];
 
-const mockTransactions: Tx[] = [
-  { id:"t1",  categoryId:"food",    vendor:"Cafe Java",          date:"19 Feb", amount:18000 },
-  { id:"t2",  categoryId:"food",    vendor:"Cafeteria – MAK",    date:"18 Feb", amount:12000 },
-  { id:"t3",  categoryId:"food",    vendor:"Nandos",             date:"17 Feb", amount:35000 },
-  { id:"t4",  categoryId:"trans",   vendor:"SafeBoda",           date:"19 Feb", amount:8000  },
-  { id:"t5",  categoryId:"trans",   vendor:"UMA Bus",            date:"18 Feb", amount:4500  },
-  { id:"t6",  categoryId:"books",   vendor:"Aristoc Booklex",    date:"15 Feb", amount:22000 },
-  { id:"t7",  categoryId:"shop",    vendor:"Shoprite",           date:"16 Feb", amount:55000 },
-  { id:"t8",  categoryId:"shop",    vendor:"Quality Supermarket",date:"14 Feb", amount:38000 },
-  { id:"t9",  categoryId:"enter",   vendor:"Netflix",            date:"12 Feb", amount:15000 },
-  { id:"t10", categoryId:"util",    vendor:"UMEME",              date:"10 Feb", amount:20000 },
-  { id:"t11", categoryId:"airtime", vendor:"MTN MoMo",           date:"19 Feb", amount:20000 },
-  { id:"t12", categoryId:"airtime", vendor:"Airtel",             date:"13 Feb", amount:10000 },
-];
+const mockTransactions: Tx[] = [];
 
-const trendData = [
-  { week: "W1", spent: 95000  },
-  { week: "W2", spent: 142000 },
-  { week: "W3", spent: 118000 },
-  { week: "W4", spent: 110000 },
-];
+const trendData: { week: string; spent: number }[] = [];
 
 const GREY_PALETTE = ["#9ca3af","#6b7280","#4b5563","#374151","#1f2937","#111827","#e5e7eb"];
 

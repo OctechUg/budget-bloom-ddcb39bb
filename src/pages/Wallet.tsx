@@ -14,56 +14,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-const mockTransactions: Transaction[] = [
-  {
-    id: "1",
-    type: "income",
-    category: "Deposit",
-    description: "MTN Mobile Money",
-    amount: 200000,
-    date: "Dec 25, 2025",
-  },
-  {
-    id: "2",
-    type: "expense",
-    category: "Food & Dining",
-    description: "Campus Cafeteria",
-    amount: 15000,
-    date: "Dec 25, 2025",
-  },
-  {
-    id: "3",
-    type: "expense",
-    category: "Transport",
-    description: "Uber Ride",
-    amount: 25000,
-    date: "Dec 24, 2025",
-  },
-  {
-    id: "4",
-    type: "income",
-    category: "Wallet Deposit",
-    description: "Airtel Money",
-    amount: 150000,
-    date: "Dec 23, 2025",
-  },
-  {
-    id: "5",
-    type: "expense",
-    category: "Shopping",
-    description: "Garden City Mall",
-    amount: 85000,
-    date: "Dec 22, 2025",
-  },
-  {
-    id: "6",
-    type: "blocked",
-    category: "Entertainment",
-    description: "Cinema Tickets",
-    amount: 40000,
-    date: "Dec 22, 2025",
-  },
-];
+const mockTransactions: Transaction[] = [];
 
 export default function Wallet() {
   const [depositOpen, setDepositOpen] = useState(false);
@@ -72,7 +23,7 @@ export default function Wallet() {
   const [filterType, setFilterType] = useState<"all" | "income" | "expense" | "blocked">("all");
   const [statusFilter, setStatusFilter] = useState("All Status");
 
-  const withdrawableBalance = 125000;
+  const withdrawableBalance = 0;
   const { toast } = useToast();
 
   const filteredTransactions = mockTransactions.filter((t) => {
