@@ -3,29 +3,15 @@ import { BottomNavigation } from "@/components/BottomNavigation";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, TrendingUp, TrendingDown } from "lucide-react";
 
-const spendingData = [
-  { month: "Jul", amount: 450000 },
-  { month: "Aug", amount: 520000 },
-  { month: "Sep", amount: 380000 },
-  { month: "Oct", amount: 490000 },
-  { month: "Nov", amount: 420000 },
-  { month: "Dec", amount: 465000 },
-];
+const spendingData: { month: string; amount: number }[] = [];
 
-const categoryBreakdown = [
-  { name: "Food & Dining", amount: 145000, percentage: 31 },
-  { name: "Shopping", amount: 120000, percentage: 26 },
-  { name: "Transport", amount: 80000, percentage: 17 },
-  { name: "Airtime & Data", amount: 40000, percentage: 9 },
-  { name: "Books & Supplies", amount: 35000, percentage: 8 },
-  { name: "Others", amount: 45000, percentage: 9 },
-];
+const categoryBreakdown: { name: string; amount: number; percentage: number }[] = [];
 
 const months = ["January 2025", "February 2025", "March 2025", "April 2025", "May 2025", "June 2025", "July 2025", "August 2025", "September 2025", "October 2025", "November 2025", "December 2025"];
 
 export default function Reports() {
   const [currentMonthIndex, setCurrentMonthIndex] = useState(11);
-  const maxAmount = Math.max(...spendingData.map((d) => d.amount));
+  const maxAmount = spendingData.length > 0 ? Math.max(...spendingData.map((d) => d.amount)) : 1;
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat("en-UG", { style: "currency", currency: "UGX", minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(value);
@@ -50,7 +36,7 @@ export default function Reports() {
         <div className="grid grid-cols-2 gap-3">
           <div className="glass-card rounded-2xl p-4">
             <p className="text-xs text-muted-foreground mb-1">Total Spent</p>
-            <p className="text-xl font-bold text-foreground">{formatCurrency(465000)}</p>
+            <p className="text-xl font-bold text-foreground">{formatCurrency(0)}</p>
             <div className="flex items-center gap-1 mt-1 text-success text-xs">
               <TrendingDown className="h-3 w-3" />
               <span>-12% vs last month</span>
@@ -58,7 +44,7 @@ export default function Reports() {
           </div>
           <div className="glass-card rounded-2xl p-4">
             <p className="text-xs text-muted-foreground mb-1">Savings Added</p>
-            <p className="text-xl font-bold text-success">{formatCurrency(125000)}</p>
+            <p className="text-xl font-bold text-success">{formatCurrency(0)}</p>
             <div className="flex items-center gap-1 mt-1 text-success text-xs">
               <TrendingUp className="h-3 w-3" />
               <span>+24% vs last month</span>

@@ -16,32 +16,7 @@ interface Notification {
   read: boolean;
 }
 
-const mockNotifications: Notification[] = [
-  {
-    id: "1",
-    type: "warning",
-    title: "Transport Budget Exceeded",
-    message: "You've reached your transport budget limit for this month.",
-    time: "2 hours ago",
-    read: false,
-  },
-  {
-    id: "2",
-    type: "success",
-    title: "Savings Added",
-    message: "UGX 45,000 moved to your withdrawable savings.",
-    time: "Yesterday",
-    read: false,
-  },
-  {
-    id: "3",
-    type: "info",
-    title: "Budget Reminder",
-    message: "You have 5 days left in this month's budget cycle.",
-    time: "2 days ago",
-    read: true,
-  },
-];
+const mockNotifications: Notification[] = [];
 
 export function NotificationsDropdown() {
   const [notifications, setNotifications] = useState(mockNotifications);
