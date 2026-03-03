@@ -53,6 +53,31 @@ export default function Wallet() {
           </button>
         </div>
 
+        {/* Balance Card */}
+        <BalanceCard 
+          title="Total Balance" 
+          amount={0} 
+          subtitle="0.00 USDC"
+          showGrowth
+          growthPercentage={0}
+        />
+
+        {/* Action Buttons */}
+        <div className="flex gap-3 mt-4 mb-6">
+          <button
+            onClick={() => setDepositOpen(true)}
+            className="flex-1 py-3 rounded-xl bg-primary text-primary-foreground font-semibold text-sm hover:bg-primary/90 transition-colors"
+          >
+            Deposit
+          </button>
+          <button
+            onClick={() => setWithdrawOpen(true)}
+            className="flex-1 py-3 rounded-xl border border-border text-foreground font-semibold text-sm hover:bg-muted/50 transition-colors"
+          >
+            Withdraw
+          </button>
+        </div>
+
         {/* Search Bar */}
         <div className="relative mb-4">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
