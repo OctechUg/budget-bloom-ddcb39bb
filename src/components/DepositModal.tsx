@@ -16,6 +16,7 @@ import { useToast } from "@/hooks/use-toast";
 interface DepositModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onDeposit: (amount: number, description: string) => Promise<void>;
 }
 
 const paymentMethods = [
@@ -25,7 +26,7 @@ const paymentMethods = [
 
 const quickAmounts = [50000, 100000, 200000, 500000];
 
-export function DepositModal({ open, onOpenChange }: DepositModalProps) {
+export function DepositModal({ open, onOpenChange, onDeposit }: DepositModalProps) {
   const [amount, setAmount] = useState("");
   const [selectedMethod, setSelectedMethod] = useState("mtn");
   const [phone, setPhone] = useState("");
@@ -52,21 +53,25 @@ export function DepositModal({ open, onOpenChange }: DepositModalProps) {
     }
 
     setIsLoading(true);
-    
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    
-    setIsLoading(false);
-    onOpenChange(false);
-    
-    toast({
-      title: "Deposit Initiated",
-      description: `${formatCurrency(Number(amount))} deposit request sent. Check your phone for confirmation.`,
-    });
-
-    // Reset form
-    setAmount("");
-    setPhone("");
+    try {
+      const method = paymentMethods.find(m => m.id === selectedMethod);
+      await onDeposit(Number(amount), `Deposit via ${method?.name || "Mobile Money"} (${phone})`);
+      onOpenChange(false);
+      toast({
+        title: "Deposit Successful",
+        description: `${formatCurrency(Number(amount))} has been added to your wallet.`,
+      });
+      setAmount("");
+      setPhone("");
+    } catch (error: any) {
+      toast({
+        title: "Deposit Failed",
+        description: error.message || "Something went wrong",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -80,7 +85,6 @@ export function DepositModal({ open, onOpenChange }: DepositModalProps) {
         </DialogHeader>
 
         <div className="space-y-6 pt-4">
-          {/* Amount Input */}
           <div className="space-y-2">
             <Label htmlFor="amount">Amount (UGX)</Label>
             <Input
@@ -91,7 +95,6 @@ export function DepositModal({ open, onOpenChange }: DepositModalProps) {
               onChange={(e) => setAmount(e.target.value)}
               className="text-lg h-12"
             />
-            {/* Quick Amounts */}
             <div className="flex gap-2 flex-wrap">
               {quickAmounts.map((amt) => (
                 <button
@@ -110,7 +113,6 @@ export function DepositModal({ open, onOpenChange }: DepositModalProps) {
             </div>
           </div>
 
-          {/* Payment Method */}
           <div className="space-y-2">
             <Label>Payment Method</Label>
             <div className="grid grid-cols-2 gap-3">
@@ -135,7 +137,6 @@ export function DepositModal({ open, onOpenChange }: DepositModalProps) {
             </div>
           </div>
 
-          {/* Phone Number */}
           <div className="space-y-2">
             <Label htmlFor="phone">Phone Number</Label>
             <div className="relative">
@@ -151,7 +152,6 @@ export function DepositModal({ open, onOpenChange }: DepositModalProps) {
             </div>
           </div>
 
-          {/* Submit Button */}
           <Button
             variant="action"
             size="xl"

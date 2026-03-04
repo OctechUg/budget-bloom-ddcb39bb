@@ -5,6 +5,7 @@ import { MoneyPoolCard } from "@/components/MoneyPoolCard";
 import { TransactionItem, Transaction } from "@/components/TransactionItem";
 import { DepositModal } from "@/components/DepositModal";
 import { WithdrawModal } from "@/components/WithdrawModal";
+import { useWallet } from "@/hooks/useWallet";
 import { useToast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
 import { Search, ChevronDown, Wallet2, PiggyBank, LayoutGrid, ArrowDownToLine, ArrowUpFromLine } from "lucide-react";
@@ -15,128 +16,76 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-const mockTransactions: Transaction[] = [];
-
 export default function Wallet() {
+  const { wallet, transactions, budgets, deposit, withdraw } = useWallet();
   const [depositOpen, setDepositOpen] = useState(false);
   const [withdrawOpen, setWithdrawOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterType, setFilterType] = useState<"all" | "income" | "expense" | "blocked">("all");
   const [statusFilter, setStatusFilter] = useState("All Status");
-
-  // Mock pool amounts — will be replaced with real data
-  const availableBalance = 0;
-  const budgetedBalance = 0;
-  const savingsBalance = 0;
-
   const { toast } = useToast();
 
-  const filteredTransactions = mockTransactions.filter((t) => {
+  const budgetedBalance = budgets.reduce((sum, b) => sum + (b.allocatedAmount - b.spentAmount), 0);
+  const savingsBalance = 0; // Will be calculated from end-of-month logic
+  const availableBalance = wallet.balance - Math.max(budgetedBalance, 0);
+
+  const displayTransactions: Transaction[] = transactions.map(t => ({
+    id: t.id,
+    type: t.type as any,
+    category: t.category,
+    description: t.description,
+    amount: t.amount,
+    date: t.date,
+    status: t.status,
+  }));
+
+  const filteredTransactions = displayTransactions.filter((t) => {
     const matchesSearch = t.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
                           t.category.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesFilter = filterType === "all" || t.type === filterType;
-    return matchesSearch && matchesFilter;
+    const matchesStatus = statusFilter === "All Status" ||
+                          (statusFilter === "Completed" && t.status === "confirmed") ||
+                          (statusFilter === "Pending" && t.status === "pending");
+    return matchesSearch && matchesFilter && matchesStatus;
   });
 
   return (
     <div className="min-h-screen gradient-bg pb-24">
-      {/* Header */}
       <header className="px-4 pt-12 pb-4">
         <div className="flex items-center justify-between mb-6">
-          <button 
-            onClick={() => window.history.back()}
-            className="w-10 h-10 rounded-full border border-border flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
-          >
-            ‹
-          </button>
+          <button onClick={() => window.history.back()} className="w-10 h-10 rounded-full border border-border flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors">‹</button>
           <h1 className="text-lg font-semibold text-foreground">My Wallet</h1>
-          <button 
-            onClick={() => toast({ title: "Wallet Info", description: "Your money is split into 3 pools: Available (spend freely), Budgeted (locked per category), and Savings (locked for goals)." })}
-            className="w-10 h-10 rounded-full border border-border flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
-          >
-            ⓘ
-          </button>
+          <button onClick={() => toast({ title: "Wallet Info", description: "Your money is split into 3 pools." })} className="w-10 h-10 rounded-full border border-border flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors">ⓘ</button>
         </div>
       </header>
 
       <main className="px-4 space-y-5">
-        {/* Fund Distribution Chart */}
         <section className="animate-fade-in">
-          <FundDistribution
-            available={availableBalance}
-            budgeted={budgetedBalance}
-            savings={savingsBalance}
-          />
+          <FundDistribution available={Math.max(availableBalance, 0)} budgeted={Math.max(budgetedBalance, 0)} savings={savingsBalance} />
         </section>
 
-        {/* Money Pool Cards */}
         <section className="space-y-3 animate-fade-in" style={{ animationDelay: "0.1s" }}>
-          <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
-            Money Pools
-          </h2>
-          <MoneyPoolCard
-            title="Available Balance"
-            amount={availableBalance}
-            description="Unallocated funds you can spend or budget"
-            icon={Wallet2}
-            variant="available"
-            actionLabel="Withdraw"
-            onAction={() => setWithdrawOpen(true)}
-          />
-          <MoneyPoolCard
-            title="Budgeted Funds"
-            amount={budgetedBalance}
-            description="Allocated across your budget categories"
-            icon={LayoutGrid}
-            variant="budgeted"
-            actionLabel="View Budgets"
-            onAction={() => window.location.href = "/budget"}
-          />
-          <MoneyPoolCard
-            title="Savings (Locked)"
-            amount={savingsBalance}
-            description="Unspent budget money, locked for your goals"
-            icon={PiggyBank}
-            variant="savings"
-          />
+          <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Money Pools</h2>
+          <MoneyPoolCard title="Available Balance" amount={Math.max(availableBalance, 0)} description="Unallocated funds you can spend or budget" icon={Wallet2} variant="available" actionLabel="Withdraw" onAction={() => setWithdrawOpen(true)} />
+          <MoneyPoolCard title="Budgeted Funds" amount={Math.max(budgetedBalance, 0)} description="Allocated across your budget categories" icon={LayoutGrid} variant="budgeted" actionLabel="View Budgets" onAction={() => window.location.href = "/budget"} />
+          <MoneyPoolCard title="Savings (Locked)" amount={savingsBalance} description="Unspent budget money, locked for your goals" icon={PiggyBank} variant="savings" />
         </section>
 
-        {/* Quick Actions */}
         <section className="flex gap-3 animate-fade-in" style={{ animationDelay: "0.15s" }}>
-          <button
-            onClick={() => setDepositOpen(true)}
-            className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl bg-primary text-primary-foreground font-semibold text-sm hover:bg-primary/90 transition-colors"
-          >
-            <ArrowDownToLine className="h-4 w-4" />
-            Deposit
+          <button onClick={() => setDepositOpen(true)} className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl bg-primary text-primary-foreground font-semibold text-sm hover:bg-primary/90 transition-colors">
+            <ArrowDownToLine className="h-4 w-4" /> Deposit
           </button>
-          <button
-            onClick={() => setWithdrawOpen(true)}
-            className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl border border-border text-foreground font-semibold text-sm hover:bg-muted/50 transition-colors"
-          >
-            <ArrowUpFromLine className="h-4 w-4" />
-            Withdraw
+          <button onClick={() => setWithdrawOpen(true)} className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl border border-border text-foreground font-semibold text-sm hover:bg-muted/50 transition-colors">
+            <ArrowUpFromLine className="h-4 w-4" /> Withdraw
           </button>
         </section>
 
-        {/* Transaction History */}
         <section className="animate-fade-in" style={{ animationDelay: "0.2s" }}>
-          <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3">
-            Transaction History
-          </h2>
-
-          {/* Search Bar */}
+          <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3">Transaction History</h2>
           <div className="relative mb-3">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search Transactions"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-11 h-12 bg-muted/50 border-border rounded-xl"
-            />
+            <Input placeholder="Search Transactions" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="pl-11 h-12 bg-muted/50 border-border rounded-xl" />
           </div>
-
-          {/* Filter Tabs */}
           <div className="flex gap-2 mb-3">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -149,7 +98,6 @@ export default function Wallet() {
                 <DropdownMenuItem onClick={() => setFilterType("all")}>All types</DropdownMenuItem>
                 <DropdownMenuItem onClick={() => setFilterType("income")}>Income</DropdownMenuItem>
                 <DropdownMenuItem onClick={() => setFilterType("expense")}>Expense</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setFilterType("blocked")}>Blocked</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
             <DropdownMenu>
@@ -167,7 +115,6 @@ export default function Wallet() {
             </DropdownMenu>
           </div>
 
-          {/* Transaction List */}
           <div className="glass-card rounded-2xl p-4">
             {filteredTransactions.length > 0 ? (
               filteredTransactions.map((transaction) => (
@@ -183,13 +130,8 @@ export default function Wallet() {
         </section>
       </main>
 
-      {/* Modals */}
-      <DepositModal open={depositOpen} onOpenChange={setDepositOpen} />
-      <WithdrawModal 
-        open={withdrawOpen} 
-        onOpenChange={setWithdrawOpen} 
-        availableBalance={availableBalance}
-      />
+      <DepositModal open={depositOpen} onOpenChange={setDepositOpen} onDeposit={deposit} />
+      <WithdrawModal open={withdrawOpen} onOpenChange={setWithdrawOpen} availableBalance={wallet.balance} onWithdraw={withdraw} />
 
       <BottomNavigation />
     </div>
