@@ -16,9 +16,10 @@ interface WithdrawModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   availableBalance: number;
+  onWithdraw: (amount: number, description: string) => Promise<void>;
 }
 
-export function WithdrawModal({ open, onOpenChange, availableBalance }: WithdrawModalProps) {
+export function WithdrawModal({ open, onOpenChange, availableBalance, onWithdraw }: WithdrawModalProps) {
   const [amount, setAmount] = useState("");
   const [phone, setPhone] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -37,43 +38,26 @@ export function WithdrawModal({ open, onOpenChange, availableBalance }: Withdraw
 
   const handleWithdraw = async () => {
     if (!amount || !phone) {
-      toast({
-        title: "Missing Information",
-        description: "Please enter amount and phone number",
-        variant: "destructive",
-      });
+      toast({ title: "Missing Information", description: "Please enter amount and phone number", variant: "destructive" });
       return;
     }
-
     if (isOverLimit) {
-      toast({
-        title: "Insufficient Balance",
-        description: "You cannot withdraw more than your available savings",
-        variant: "destructive",
-      });
+      toast({ title: "Insufficient Balance", description: "You cannot withdraw more than your available balance", variant: "destructive" });
       return;
     }
 
     setIsLoading(true);
-    
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    
-    setIsLoading(false);
-    onOpenChange(false);
-    
-    toast({
-      title: "Withdrawal Successful",
-      description: `${formatCurrency(Number(amount))} has been sent to your mobile money.`,
-    });
-
-    // Reset form
-    setAmount("");
-    setPhone("");
-  };
-
-  const handleWithdrawAll = () => {
-    setAmount(String(availableBalance));
+    try {
+      await onWithdraw(Number(amount), `Withdrawal to Mobile Money (${phone})`);
+      onOpenChange(false);
+      toast({ title: "Withdrawal Successful", description: `${formatCurrency(Number(amount))} has been sent to your mobile money.` });
+      setAmount("");
+      setPhone("");
+    } catch (error: any) {
+      toast({ title: "Withdrawal Failed", description: error.message || "Something went wrong", variant: "destructive" });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -81,31 +65,19 @@ export function WithdrawModal({ open, onOpenChange, availableBalance }: Withdraw
       <DialogContent className="sm:max-w-md rounded-2xl">
         <DialogHeader>
           <DialogTitle className="text-xl">Withdraw Savings</DialogTitle>
-          <DialogDescription>
-            Transfer your savings to mobile money
-          </DialogDescription>
+          <DialogDescription>Transfer your savings to mobile money</DialogDescription>
         </DialogHeader>
 
         <div className="space-y-6 pt-4">
-          {/* Available Balance */}
           <div className="bg-success/10 rounded-2xl p-4 border border-success/20">
             <p className="text-sm text-muted-foreground mb-1">Available to withdraw</p>
-            <p className="text-2xl font-bold text-success">
-              {formatCurrency(availableBalance)}
-            </p>
-            <p className="text-xs text-muted-foreground mt-1">
-              From unused budget allocations
-            </p>
+            <p className="text-2xl font-bold text-success">{formatCurrency(availableBalance)}</p>
           </div>
 
-          {/* Amount Input */}
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <Label htmlFor="withdraw-amount">Amount (UGX)</Label>
-              <button
-                onClick={handleWithdrawAll}
-                className="text-xs font-medium text-primary hover:underline"
-              >
+              <button onClick={() => setAmount(String(availableBalance))} className="text-xs font-medium text-primary hover:underline">
                 Withdraw All
               </button>
             </div>
@@ -125,7 +97,6 @@ export function WithdrawModal({ open, onOpenChange, availableBalance }: Withdraw
             )}
           </div>
 
-          {/* Phone Number */}
           <div className="space-y-2">
             <Label htmlFor="withdraw-phone">Receive on</Label>
             <div className="relative">
@@ -141,7 +112,6 @@ export function WithdrawModal({ open, onOpenChange, availableBalance }: Withdraw
             </div>
           </div>
 
-          {/* Submit Button */}
           <Button
             variant="success"
             size="xl"

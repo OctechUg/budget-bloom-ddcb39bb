@@ -12,41 +12,56 @@ import { QuickServices } from "@/components/QuickServices";
 import { NotificationsDropdown } from "@/components/NotificationsDropdown";
 import { BottomNavigation } from "@/components/BottomNavigation";
 import { useAuth } from "@/hooks/useAuth";
+import { useWallet } from "@/hooks/useWallet";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { 
-  Utensils, 
-  Car, 
-  Book, 
-  ShoppingBag, 
-  Coffee,
-  LogIn,
-  RefreshCw,
-  Star,
-  X,
+import {
+  Utensils, Car, Book, ShoppingBag, Coffee,
+  LogIn, RefreshCw, Star, X,
 } from "lucide-react";
 
-const mockBudgets: { category: string; icon: React.ReactNode; spent: number; budget: number }[] = [];
-
-const mockTransactions: Transaction[] = [];
+const iconMap: Record<string, React.ReactNode> = {
+  utensils: <Utensils className="h-4 w-4" />,
+  car: <Car className="h-4 w-4" />,
+  book: <Book className="h-4 w-4" />,
+  "shopping-bag": <ShoppingBag className="h-4 w-4" />,
+  coffee: <Coffee className="h-4 w-4" />,
+};
 
 export default function Dashboard() {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { wallet, transactions, budgets, deposit, withdraw, transfer, setBudget, refetch } = useWallet();
   const [depositOpen, setDepositOpen] = useState(false);
   const [withdrawOpen, setWithdrawOpen] = useState(false);
   const [budgetOpen, setBudgetOpen] = useState(false);
   const [transferOpen, setTransferOpen] = useState(false);
-  const [walletBalance, setWalletBalance] = useState(0);
   const [showPromo, setShowPromo] = useState(true);
   const { toast } = useToast();
 
-  const withdrawableBalance = walletBalance;
   const displayName = user?.email?.split("@")[0] || "Guest";
+
+  // Map transactions to the TransactionItem format
+  const displayTransactions: Transaction[] = transactions.slice(0, 3).map(t => ({
+    id: t.id,
+    type: t.type as any,
+    category: t.category,
+    description: t.description,
+    amount: t.amount,
+    date: t.date,
+    status: t.status,
+  }));
+
+  // Map budgets to BudgetCard format
+  const displayBudgets = budgets.slice(0, 2).map(b => ({
+    category: b.name,
+    icon: iconMap[b.icon] || <Utensils className="h-4 w-4" />,
+    spent: b.spentAmount,
+    budget: b.allocatedAmount,
+  }));
 
   return (
     <div className="min-h-screen gradient-bg pb-24">
-      {/* Header */}
       <header className="px-4 pt-12 pb-6">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
@@ -68,10 +83,8 @@ export default function Dashboard() {
                 </Button>
               </Link>
             )}
-            <button 
-              onClick={() => {
-                toast({ title: "Refreshed", description: "Your dashboard is up to date." });
-              }}
+            <button
+              onClick={() => { refetch(); toast({ title: "Refreshed", description: "Your dashboard is up to date." }); }}
               className="w-10 h-10 rounded-full border border-border flex items-center justify-center text-muted-foreground hover:text-foreground hover:border-primary/50 transition-all"
             >
               <RefreshCw className="h-4 w-4" />
@@ -80,19 +93,16 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Balance Card */}
         <BalanceCard
           title="Wallet Balance"
-          amount={walletBalance}
+          amount={wallet.balance}
           subtitle="Available for budgeting"
           showGrowth
-          growthPercentage={12}
+          growthPercentage={wallet.totalDeposited > 0 ? Math.round((wallet.balance / wallet.totalDeposited) * 100) : 0}
         />
       </header>
 
-      {/* Main Content */}
       <main className="px-4 space-y-6">
-        {/* Quick Actions */}
         <section className="animate-fade-in" style={{ animationDelay: "0.1s" }}>
           <QuickActions
             onDeposit={() => setDepositOpen(true)}
@@ -102,15 +112,13 @@ export default function Dashboard() {
           />
         </section>
 
-        {/* Quick Services */}
         <section className="animate-fade-in" style={{ animationDelay: "0.15s" }}>
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
-              Quick Services
-            </h2>
+            <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Quick Services</h2>
           </div>
           <QuickServices />
         </section>
+
         {showPromo && (
           <section className="animate-fade-in" style={{ animationDelay: "0.15s" }}>
             <div className="relative glass-card rounded-2xl p-4 flex items-center gap-3 overflow-hidden">
@@ -121,10 +129,10 @@ export default function Dashboard() {
                 <p className="font-semibold text-foreground text-sm">Share with Friends</p>
                 <p className="text-xs text-muted-foreground">Refer a friend and earn rewards</p>
               </div>
-              <button 
+              <button
                 onClick={() => {
                   if (navigator.share) {
-                    navigator.share({ title: "BudgetWise", text: "Check out BudgetWise - the smart budgeting app for students!", url: window.location.origin });
+                    navigator.share({ title: "BudgetWise", text: "Check out BudgetWise!", url: window.location.origin });
                   } else {
                     navigator.clipboard.writeText(window.location.origin);
                     toast({ title: "Link Copied!", description: "Share link copied to clipboard." });
@@ -138,67 +146,41 @@ export default function Dashboard() {
           </section>
         )}
 
-        {/* Budget Overview */}
         <section className="animate-fade-in" style={{ animationDelay: "0.2s" }}>
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
-              Budget Overview
-            </h2>
-            <button 
-              onClick={() => navigate("/budget")}
-              className="text-sm font-medium text-primary hover:underline"
-            >
-              View All
-            </button>
+            <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Budget Overview</h2>
+            <button onClick={() => navigate("/budget")} className="text-sm font-medium text-primary hover:underline">View All</button>
           </div>
           <div className="space-y-3">
-            {mockBudgets.slice(0, 2).map((budget) => (
-              <BudgetCard
-                key={budget.category}
-                category={budget.category}
-                icon={budget.icon}
-                spent={budget.spent}
-                budget={budget.budget}
-              />
-            ))}
+            {displayBudgets.length > 0 ? displayBudgets.map((budget) => (
+              <BudgetCard key={budget.category} category={budget.category} icon={budget.icon} spent={budget.spent} budget={budget.budget} />
+            )) : (
+              <div className="glass-card rounded-2xl p-4 text-center text-muted-foreground text-sm">
+                No budgets set yet. Tap "Set Budget" to get started.
+              </div>
+            )}
           </div>
         </section>
 
-        {/* Recent Transactions */}
         <section className="animate-fade-in" style={{ animationDelay: "0.3s" }}>
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
-              Recent Transactions
-            </h2>
-            <button 
-              onClick={() => navigate("/wallet")}
-              className="text-sm font-medium text-primary hover:underline"
-            >
-              See All
-            </button>
+            <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Recent Transactions</h2>
+            <button onClick={() => navigate("/wallet")} className="text-sm font-medium text-primary hover:underline">See All</button>
           </div>
           <div className="glass-card rounded-2xl p-4">
-            {mockTransactions.slice(0, 3).map((transaction) => (
+            {displayTransactions.length > 0 ? displayTransactions.map((transaction) => (
               <TransactionItem key={transaction.id} transaction={transaction} />
-            ))}
+            )) : (
+              <div className="py-4 text-center text-muted-foreground text-sm">No transactions yet</div>
+            )}
           </div>
         </section>
       </main>
 
-      {/* Modals */}
-      <DepositModal open={depositOpen} onOpenChange={setDepositOpen} />
-      <WithdrawModal 
-        open={withdrawOpen} 
-        onOpenChange={setWithdrawOpen} 
-        availableBalance={withdrawableBalance}
-      />
-      <SetBudgetModal open={budgetOpen} onOpenChange={setBudgetOpen} />
-      <TransferModal
-        open={transferOpen}
-        onOpenChange={setTransferOpen}
-        availableBalance={walletBalance}
-        onTransfer={(amount) => setWalletBalance((prev) => prev - amount)}
-      />
+      <DepositModal open={depositOpen} onOpenChange={setDepositOpen} onDeposit={deposit} />
+      <WithdrawModal open={withdrawOpen} onOpenChange={setWithdrawOpen} availableBalance={wallet.balance} onWithdraw={withdraw} />
+      <SetBudgetModal open={budgetOpen} onOpenChange={setBudgetOpen} onSetBudget={setBudget} />
+      <TransferModal open={transferOpen} onOpenChange={setTransferOpen} availableBalance={wallet.balance} onTransfer={transfer} />
 
       <BottomNavigation />
     </div>

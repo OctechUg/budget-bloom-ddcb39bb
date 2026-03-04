@@ -10,6 +10,7 @@ export interface Transaction {
   amount: number;
   date: string;
   icon?: React.ReactNode;
+  status?: string;
 }
 
 interface TransactionItemProps {
