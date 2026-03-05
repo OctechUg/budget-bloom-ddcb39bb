@@ -6,17 +6,20 @@ export interface WalletData {
   balance: number;
   totalDeposited: number;
   totalWithdrawn: number;
+  savingsBalance: number;
+  savingsRate: number;
+  savingsLockedUntil: string | null;
 }
 
 export interface TransactionData {
   id: string;
   type: string;
   category: string;
+  categoryId: string | null;
   description: string;
   amount: number;
   date: string;
   status: string;
-  icon?: string;
 }
 
 export interface BudgetCategory {
@@ -31,7 +34,7 @@ export interface BudgetCategory {
 
 export function useWallet() {
   const { user } = useAuth();
-  const [wallet, setWallet] = useState<WalletData>({ balance: 0, totalDeposited: 0, totalWithdrawn: 0 });
+  const [wallet, setWallet] = useState<WalletData>({ balance: 0, totalDeposited: 0, totalWithdrawn: 0, savingsBalance: 0, savingsRate: 5, savingsLockedUntil: null });
   const [transactions, setTransactions] = useState<TransactionData[]>([]);
   const [budgets, setBudgets] = useState<BudgetCategory[]>([]);
   const [loading, setLoading] = useState(true);
@@ -48,6 +51,9 @@ export function useWallet() {
         balance: data.balance,
         totalDeposited: data.total_deposited,
         totalWithdrawn: data.total_withdrawn,
+        savingsBalance: (data as any).savings_balance ?? 0,
+        savingsRate: (data as any).savings_rate ?? 5,
+        savingsLockedUntil: (data as any).savings_locked_until ?? null,
       });
     }
   }, [user]);
@@ -66,6 +72,7 @@ export function useWallet() {
           id: t.id,
           type: t.type === "deposit" ? "income" : t.type === "withdrawal" ? "income" : "expense",
           category: (t.budget_categories as any)?.name || t.type.charAt(0).toUpperCase() + t.type.slice(1),
+          categoryId: t.category_id,
           description: t.description || t.type,
           amount: t.type === "deposit" ? t.amount : -t.amount,
           date: new Date(t.created_at).toLocaleDateString("en-UG", { month: "short", day: "numeric", year: "numeric" }),
@@ -108,14 +115,13 @@ export function useWallet() {
     if (user) {
       refetch();
     } else {
-      setWallet({ balance: 0, totalDeposited: 0, totalWithdrawn: 0 });
+      setWallet({ balance: 0, totalDeposited: 0, totalWithdrawn: 0, savingsBalance: 0, savingsRate: 5, savingsLockedUntil: null });
       setTransactions([]);
       setBudgets([]);
       setLoading(false);
     }
   }, [user, refetch]);
 
-  // Realtime subscription
   useEffect(() => {
     if (!user) return;
     const channel = supabase
@@ -130,11 +136,7 @@ export function useWallet() {
   const deposit = async (amount: number, description: string) => {
     if (!user) throw new Error("Not authenticated");
     const { error } = await supabase.from("transactions").insert({
-      user_id: user.id,
-      type: "deposit",
-      amount,
-      description,
-      status: "confirmed",
+      user_id: user.id, type: "deposit", amount, description, status: "confirmed",
     });
     if (error) throw error;
   };
@@ -143,11 +145,7 @@ export function useWallet() {
     if (!user) throw new Error("Not authenticated");
     if (amount > wallet.balance) throw new Error("Insufficient balance");
     const { error } = await supabase.from("transactions").insert({
-      user_id: user.id,
-      type: "withdrawal",
-      amount,
-      description,
-      status: "confirmed",
+      user_id: user.id, type: "withdrawal", amount, description, status: "confirmed",
     });
     if (error) throw error;
   };
@@ -156,11 +154,23 @@ export function useWallet() {
     if (!user) throw new Error("Not authenticated");
     if (amount > wallet.balance) throw new Error("Insufficient balance");
     const { error } = await supabase.from("transactions").insert({
-      user_id: user.id,
-      type: "withdrawal",
-      amount,
+      user_id: user.id, type: "withdrawal", amount,
       description: `Transfer to ${recipientId}${note ? `: ${note}` : ""}`,
       status: "confirmed",
+    });
+    if (error) throw error;
+  };
+
+  const spendFromBudget = async (amount: number, description: string, categoryId: string) => {
+    if (!user) throw new Error("Not authenticated");
+    // Check budget remaining
+    const cat = budgets.find(b => b.id === categoryId);
+    if (cat && amount > (cat.allocatedAmount - cat.spentAmount)) {
+      throw new Error("Spending blocked: exceeds budget limit");
+    }
+    if (amount > wallet.balance) throw new Error("Insufficient wallet balance");
+    const { error } = await supabase.from("transactions").insert({
+      user_id: user.id, type: "expense", amount, description, category_id: categoryId, status: "confirmed",
     });
     if (error) throw error;
   };
@@ -168,29 +178,17 @@ export function useWallet() {
   const setBudget = async (categoryName: string, icon: string, amount: number) => {
     if (!user) throw new Error("Not authenticated");
     const currentMonth = new Date().toISOString().slice(0, 7);
-    
-    // Check if category already exists for this month
     const { data: existing } = await supabase
-      .from("budget_categories")
-      .select("id")
-      .eq("user_id", user.id)
-      .eq("name", categoryName)
-      .eq("period_month", currentMonth)
-      .single();
+      .from("budget_categories").select("id")
+      .eq("user_id", user.id).eq("name", categoryName).eq("period_month", currentMonth).single();
 
     if (existing) {
-      const { error } = await supabase
-        .from("budget_categories")
-        .update({ allocated_amount: amount, icon })
-        .eq("id", existing.id);
+      const { error } = await supabase.from("budget_categories")
+        .update({ allocated_amount: amount, icon }).eq("id", existing.id);
       if (error) throw error;
     } else {
       const { error } = await supabase.from("budget_categories").insert({
-        user_id: user.id,
-        name: categoryName,
-        icon,
-        allocated_amount: amount,
-        period_month: currentMonth,
+        user_id: user.id, name: categoryName, icon, allocated_amount: amount, period_month: currentMonth,
       });
       if (error) throw error;
     }
@@ -198,23 +196,28 @@ export function useWallet() {
 
   const deleteBudget = async (categoryId: string) => {
     if (!user) throw new Error("Not authenticated");
-    const { error } = await supabase
-      .from("budget_categories")
-      .delete()
-      .eq("id", categoryId);
+    const { error } = await supabase.from("budget_categories").delete().eq("id", categoryId);
+    if (error) throw error;
+  };
+
+  const updateSavingsRate = async (rate: number) => {
+    if (!user) throw new Error("Not authenticated");
+    const { error } = await supabase.from("wallets").update({ savings_rate: rate } as any).eq("user_id", user.id);
+    if (error) throw error;
+  };
+
+  const extendSavingsLock = async (months: number) => {
+    if (!user) throw new Error("Not authenticated");
+    const currentLock = wallet.savingsLockedUntil ? new Date(wallet.savingsLockedUntil) : new Date();
+    const base = currentLock > new Date() ? currentLock : new Date();
+    base.setMonth(base.getMonth() + months);
+    const { error } = await supabase.from("wallets").update({ savings_locked_until: base.toISOString() } as any).eq("user_id", user.id);
     if (error) throw error;
   };
 
   return {
-    wallet,
-    transactions,
-    budgets,
-    loading,
-    deposit,
-    withdraw,
-    transfer,
-    setBudget,
-    deleteBudget,
-    refetch,
+    wallet, transactions, budgets, loading,
+    deposit, withdraw, transfer, spendFromBudget,
+    setBudget, deleteBudget, updateSavingsRate, extendSavingsLock, refetch,
   };
 }
