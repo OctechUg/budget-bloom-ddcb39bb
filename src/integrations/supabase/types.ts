@@ -159,6 +159,9 @@ export type Database = {
           balance: number
           created_at: string
           id: string
+          savings_balance: number
+          savings_locked_until: string | null
+          savings_rate: number
           total_deposited: number
           total_withdrawn: number
           updated_at: string
@@ -168,6 +171,9 @@ export type Database = {
           balance?: number
           created_at?: string
           id?: string
+          savings_balance?: number
+          savings_locked_until?: string | null
+          savings_rate?: number
           total_deposited?: number
           total_withdrawn?: number
           updated_at?: string
@@ -177,6 +183,9 @@ export type Database = {
           balance?: number
           created_at?: string
           id?: string
+          savings_balance?: number
+          savings_locked_until?: string | null
+          savings_rate?: number
           total_deposited?: number
           total_withdrawn?: number
           updated_at?: string

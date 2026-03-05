@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { BottomNavigation } from "@/components/BottomNavigation";
 import { SetBudgetModal } from "@/components/SetBudgetModal";
+import { SpendModal } from "@/components/SpendModal";
 import { Button } from "@/components/ui/button";
 import { useWallet } from "@/hooks/useWallet";
 import {
@@ -70,7 +71,7 @@ function ProgressBar({ pct, status }: { pct: number; status: Status }) {
   );
 }
 
-function CategoryCard({ cat, onSelect, onEdit, onDelete }: { cat: Category; onSelect: () => void; onEdit: () => void; onDelete: () => void }) {
+function CategoryCard({ cat, onSelect, onEdit, onDelete, onSpend }: { cat: Category; onSelect: () => void; onEdit: () => void; onDelete: () => void; onSpend: () => void }) {
   const pct = cat.budget > 0 ? Math.min((cat.spent / cat.budget) * 100, 100) : 0;
   const remaining = cat.budget - cat.spent;
   const status = cat.budget > 0 ? getStatus((cat.spent / cat.budget) * 100) : "safe";
@@ -93,9 +94,16 @@ function CategoryCard({ cat, onSelect, onEdit, onDelete }: { cat: Category; onSe
         </div>
       </div>
       <ProgressBar pct={pct} status={status} />
-      <div className="flex justify-between text-[11px]">
+      <div className="flex justify-between items-center text-[11px]">
         <span className="text-muted-foreground">{pct.toFixed(0)}% used</span>
-        <span className={statusText[status]}>{remaining < 0 ? `Over by ${fmt(Math.abs(remaining))}` : `${fmt(remaining)} left`}</span>
+        <div className="flex items-center gap-2">
+          <span className={statusText[status]}>{remaining < 0 ? `Over by ${fmt(Math.abs(remaining))}` : `${fmt(remaining)} left`}</span>
+          {remaining > 0 && (
+            <button onClick={onSpend} className="px-2.5 py-1 rounded-lg bg-primary/15 text-primary text-[11px] font-semibold hover:bg-primary/25 transition-colors">
+              Spend
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );
@@ -128,9 +136,10 @@ function SmartAlerts({ categories }: { categories: Category[] }) {
 }
 
 export default function Budget() {
-  const { budgets, setBudget, deleteBudget, transactions } = useWallet();
+  const { budgets, setBudget, deleteBudget, spendFromBudget, transactions } = useWallet();
   const [budgetModalOpen, setBudgetModalOpen] = useState(false);
   const [selectedCat, setSelectedCat] = useState<Category | null>(null);
+  const [spendCat, setSpendCat] = useState<{ id: string; name: string; remaining: number } | null>(null);
 
   const categories: Category[] = budgets.map(b => ({
     id: b.id,
@@ -237,6 +246,7 @@ export default function Budget() {
                   onSelect={() => setSelectedCat(selectedCat?.id === cat.id ? null : cat)}
                   onEdit={() => setBudgetModalOpen(true)}
                   onDelete={() => handleDelete(cat.id)}
+                  onSpend={() => setSpendCat({ id: cat.id, name: cat.category, remaining: cat.budget - cat.spent })}
                 />
               </div>
             ))}
@@ -284,6 +294,16 @@ export default function Budget() {
       </main>
 
       <SetBudgetModal open={budgetModalOpen} onOpenChange={setBudgetModalOpen} onSetBudget={setBudget} />
+      {spendCat && (
+        <SpendModal
+          open={!!spendCat}
+          onOpenChange={(open) => { if (!open) setSpendCat(null); }}
+          categoryId={spendCat.id}
+          categoryName={spendCat.name}
+          remaining={spendCat.remaining}
+          onSpend={spendFromBudget}
+        />
+      )}
       <BottomNavigation />
     </div>
   );
