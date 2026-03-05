@@ -179,8 +179,21 @@ export function useWallet() {
     if (!user) throw new Error("Not authenticated");
     const currentMonth = new Date().toISOString().slice(0, 7);
     const { data: existing } = await supabase
-      .from("budget_categories").select("id")
+      .from("budget_categories").select("id, allocated_amount")
       .eq("user_id", user.id).eq("name", categoryName).eq("period_month", currentMonth).single();
+
+    // Calculate total already allocated (excluding the category being edited)
+    const otherAllocated = budgets
+      .filter(b => existing ? b.id !== existing.id : true)
+      .reduce((sum, b) => sum + b.allocatedAmount, 0);
+    const availableForBudget = wallet.balance + otherAllocated <= 0 ? 0 : wallet.balance - (otherAllocated - budgets.reduce((s, b) => s + b.spentAmount, 0));
+    
+    // Simple check: total allocated across all categories cannot exceed wallet balance + savings
+    const totalAfter = otherAllocated + amount;
+    const totalAvailable = wallet.balance + budgets.reduce((s, b) => s + b.spentAmount, 0);
+    if (totalAfter > totalAvailable) {
+      throw new Error(`Budget exceeds available funds. You have ${new Intl.NumberFormat("en-UG", { style: "currency", currency: "UGX", minimumFractionDigits: 0 }).format(totalAvailable - otherAllocated)} available to allocate.`);
+    }
 
     if (existing) {
       const { error } = await supabase.from("budget_categories")
