@@ -215,7 +215,7 @@ export function useWallet() {
 
   const updateSavingsRate = async (rate: number) => {
     if (!user) throw new Error("Not authenticated");
-    const { error } = await supabase.from("wallets").update({ savings_rate: rate } as any).eq("user_id", user.id);
+    const { error } = await supabase.from("wallets").update({ savings_rate: rate }).eq("user_id", user.id);
     if (error) throw error;
   };
 
