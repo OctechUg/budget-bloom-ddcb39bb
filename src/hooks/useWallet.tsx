@@ -224,7 +224,7 @@ export function useWallet() {
     const currentLock = wallet.savingsLockedUntil ? new Date(wallet.savingsLockedUntil) : new Date();
     const base = currentLock > new Date() ? currentLock : new Date();
     base.setMonth(base.getMonth() + months);
-    const { error } = await supabase.from("wallets").update({ savings_locked_until: base.toISOString() } as any).eq("user_id", user.id);
+    const { error } = await supabase.from("wallets").update({ savings_locked_until: base.toISOString() }).eq("user_id", user.id);
     if (error) throw error;
   };
 
