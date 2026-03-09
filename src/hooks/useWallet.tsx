@@ -51,9 +51,9 @@ export function useWallet() {
         balance: data.balance,
         totalDeposited: data.total_deposited,
         totalWithdrawn: data.total_withdrawn,
-        savingsBalance: (data as any).savings_balance ?? 0,
-        savingsRate: (data as any).savings_rate ?? 5,
-        savingsLockedUntil: (data as any).savings_locked_until ?? null,
+        savingsBalance: data.savings_balance ?? 0,
+        savingsRate: data.savings_rate ?? 5,
+        savingsLockedUntil: data.savings_locked_until ?? null,
       });
     }
   }, [user]);
@@ -215,7 +215,7 @@ export function useWallet() {
 
   const updateSavingsRate = async (rate: number) => {
     if (!user) throw new Error("Not authenticated");
-    const { error } = await supabase.from("wallets").update({ savings_rate: rate } as any).eq("user_id", user.id);
+    const { error } = await supabase.from("wallets").update({ savings_rate: rate }).eq("user_id", user.id);
     if (error) throw error;
   };
 
@@ -224,7 +224,7 @@ export function useWallet() {
     const currentLock = wallet.savingsLockedUntil ? new Date(wallet.savingsLockedUntil) : new Date();
     const base = currentLock > new Date() ? currentLock : new Date();
     base.setMonth(base.getMonth() + months);
-    const { error } = await supabase.from("wallets").update({ savings_locked_until: base.toISOString() } as any).eq("user_id", user.id);
+    const { error } = await supabase.from("wallets").update({ savings_locked_until: base.toISOString() }).eq("user_id", user.id);
     if (error) throw error;
   };
 
