@@ -70,7 +70,7 @@ export default function Wallet() {
           <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Money Pools</h2>
           <MoneyPoolCard title="Available Balance" amount={Math.max(availableBalance, 0)} description="Unallocated funds you can spend or budget" icon={Wallet2} variant="available" actionLabel="Withdraw" onAction={() => setWithdrawOpen(true)} />
           <MoneyPoolCard title="Budgeted Funds" amount={Math.max(budgetedBalance, 0)} description="Allocated across your budget categories" icon={LayoutGrid} variant="budgeted" actionLabel="View Budgets" onAction={() => window.location.href = "/budget"} />
-          <MoneyPoolCard title="Savings (Locked)" amount={savingsBalance} description={savingsLocked && lockDate ? `Locked until ${lockDate} • ${wallet.savingsRate}% of deposits` : `${wallet.savingsRate}% of each deposit`} icon={PiggyBank} variant="savings" />
+          <MoneyPoolCard title="Savings (Locked)" amount={savingsBalance} description={savingsLocked && lockDate ? `Locked until ${lockDate} • ${wallet.savingsRate}% of deposits` : `${wallet.savingsRate}% of each deposit`} icon={PiggyBank} variant="savings" actionLabel="View Savings" onAction={() => window.location.href = "/savings"} />
         </section>
 
         <section className="flex gap-3 animate-fade-in" style={{ animationDelay: "0.15s" }}>
