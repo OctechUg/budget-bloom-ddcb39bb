@@ -51,9 +51,9 @@ export function useWallet() {
         balance: data.balance,
         totalDeposited: data.total_deposited,
         totalWithdrawn: data.total_withdrawn,
-        savingsBalance: (data as any).savings_balance ?? 0,
-        savingsRate: (data as any).savings_rate ?? 5,
-        savingsLockedUntil: (data as any).savings_locked_until ?? null,
+        savingsBalance: data.savings_balance ?? 0,
+        savingsRate: data.savings_rate ?? 5,
+        savingsLockedUntil: data.savings_locked_until ?? null,
       });
     }
   }, [user]);
