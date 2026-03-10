@@ -29,7 +29,7 @@ import { Progress } from "@/components/ui/progress";
 
 export default function Savings() {
   const navigate = useNavigate();
-  const { wallet, transactions, updateSavingsRate, extendSavingsLock } = useWallet();
+  const { wallet, transactions, updateSavingsRate, extendSavingsLock, refetch } = useWallet();
   const { toast } = useToast();
   const [extendOpen, setExtendOpen] = useState(false);
   const [rateOpen, setRateOpen] = useState(false);
