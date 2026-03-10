@@ -402,5 +402,6 @@ export default function Profile() {
 
       <BottomNavigation />
     </div>
+    </PullToRefresh>
   );
 }
