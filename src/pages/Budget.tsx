@@ -178,7 +178,8 @@ export default function Budget() {
   };
 
   return (
-    <div className="min-h-screen gradient-bg pb-28">
+    <PullToRefresh onRefresh={async () => { await refetch(); }} className="min-h-screen">
+    <div className="gradient-bg pb-28">
       <header className="px-4 pt-12 pb-4 max-w-5xl mx-auto">
         <div className="flex items-center justify-between mb-6">
           <div>
