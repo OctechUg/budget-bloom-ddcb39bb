@@ -137,7 +137,7 @@ function SmartAlerts({ categories }: { categories: Category[] }) {
 }
 
 export default function Budget() {
-  const { budgets, setBudget, deleteBudget, spendFromBudget, transactions } = useWallet();
+  const { budgets, setBudget, deleteBudget, spendFromBudget, transactions, refetch } = useWallet();
   const [budgetModalOpen, setBudgetModalOpen] = useState(false);
   const [selectedCat, setSelectedCat] = useState<Category | null>(null);
   const [spendCat, setSpendCat] = useState<{ id: string; name: string; remaining: number } | null>(null);
