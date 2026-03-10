@@ -167,5 +167,6 @@ export default function Dashboard() {
 
       <BottomNavigation />
     </div>
+    </PullToRefresh>
   );
 }
