@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { BottomNavigation } from "@/components/BottomNavigation";
+import { PullToRefresh } from "@/components/PullToRefresh";
 import { SetBudgetModal } from "@/components/SetBudgetModal";
 import { SpendModal } from "@/components/SpendModal";
 import { Button } from "@/components/ui/button";
