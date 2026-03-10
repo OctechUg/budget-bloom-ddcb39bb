@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 export default function Wallet() {
-  const { wallet, transactions, budgets, deposit, withdraw } = useWallet();
+  const { wallet, transactions, budgets, deposit, withdraw, refetch } = useWallet();
   const [depositOpen, setDepositOpen] = useState(false);
   const [withdrawOpen, setWithdrawOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
