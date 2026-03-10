@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { BottomNavigation } from "@/components/BottomNavigation";
+import { PullToRefresh } from "@/components/PullToRefresh";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, TrendingUp, TrendingDown } from "lucide-react";
 
