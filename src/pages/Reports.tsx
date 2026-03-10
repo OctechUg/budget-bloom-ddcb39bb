@@ -19,7 +19,8 @@ export default function Reports() {
   };
 
   return (
-    <div className="min-h-screen gradient-bg pb-24">
+    <PullToRefresh onRefresh={async () => {}} className="min-h-screen">
+    <div className="gradient-bg pb-24">
       <header className="px-4 pt-12 pb-6">
         <h1 className="text-2xl font-bold text-foreground mb-4">Reports</h1>
         <div className="flex items-center justify-between glass-card rounded-xl p-2">
