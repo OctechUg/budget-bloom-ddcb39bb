@@ -1,7 +1,3 @@
-import { Home, Wallet, RefreshCw, BarChart3, FileText } from "lucide-react";
-import { Link, useLocation } from "react-router-dom";
-import { cn } from "@/lib/utils";
-
 import { Home, Wallet, BarChart3, Settings } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
