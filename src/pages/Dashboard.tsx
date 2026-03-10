@@ -162,19 +162,6 @@ export default function Dashboard() {
           </div>
         </section>
 
-        <section className="animate-fade-in" style={{ animationDelay: "0.3s" }}>
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Recent Transactions</h2>
-            <button onClick={() => navigate("/wallet")} className="text-sm font-medium text-primary hover:underline">See All</button>
-          </div>
-          <div className="glass-card rounded-2xl p-4">
-            {displayTransactions.length > 0 ? displayTransactions.map((transaction) => (
-              <TransactionItem key={transaction.id} transaction={transaction} />
-            )) : (
-              <div className="py-4 text-center text-muted-foreground text-sm">No transactions yet</div>
-            )}
-          </div>
-        </section>
       </main>
 
       <DepositModal open={depositOpen} onOpenChange={setDepositOpen} onDeposit={deposit} />
