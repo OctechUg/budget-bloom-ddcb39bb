@@ -62,7 +62,8 @@ export default function Dashboard() {
   }));
 
   return (
-    <div className="min-h-screen gradient-bg pb-24">
+    <PullToRefresh onRefresh={async () => { await refetch(); toast({ title: "Refreshed", description: "Your dashboard is up to date." }); }} className="min-h-screen">
+    <div className="gradient-bg pb-24">
       <header className="px-4 pt-12 pb-6">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
@@ -84,12 +85,6 @@ export default function Dashboard() {
                 </Button>
               </Link>
             )}
-            <button
-              onClick={() => { refetch(); toast({ title: "Refreshed", description: "Your dashboard is up to date." }); }}
-              className="w-10 h-10 rounded-full border border-border flex items-center justify-center text-muted-foreground hover:text-foreground hover:border-primary/50 transition-all"
-            >
-              <RefreshCw className="h-4 w-4" />
-            </button>
             <NotificationsDropdown />
           </div>
         </div>
