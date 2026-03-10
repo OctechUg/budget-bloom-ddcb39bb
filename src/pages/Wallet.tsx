@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { BottomNavigation } from "@/components/BottomNavigation";
+import { PullToRefresh } from "@/components/PullToRefresh";
 import { FundDistribution } from "@/components/FundDistribution";
 import { MoneyPoolCard } from "@/components/MoneyPoolCard";
 import { TransactionItem, Transaction } from "@/components/TransactionItem";
@@ -17,7 +18,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 export default function Wallet() {
-  const { wallet, transactions, budgets, deposit, withdraw } = useWallet();
+  const { wallet, transactions, budgets, deposit, withdraw, refetch } = useWallet();
   const [depositOpen, setDepositOpen] = useState(false);
   const [withdrawOpen, setWithdrawOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -52,7 +53,8 @@ export default function Wallet() {
   });
 
   return (
-    <div className="min-h-screen gradient-bg pb-24">
+    <PullToRefresh onRefresh={async () => { await refetch(); toast({ title: "Refreshed" }); }} className="min-h-screen">
+    <div className="gradient-bg pb-24">
       <header className="px-4 pt-12 pb-4">
         <div className="flex items-center justify-between mb-6">
           <button onClick={() => window.history.back()} className="w-10 h-10 rounded-full border border-border flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors">‹</button>
@@ -137,5 +139,6 @@ export default function Wallet() {
 
       <BottomNavigation />
     </div>
+    </PullToRefresh>
   );
 }

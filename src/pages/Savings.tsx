@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { BottomNavigation } from "@/components/BottomNavigation";
+import { PullToRefresh } from "@/components/PullToRefresh";
 import { useWallet } from "@/hooks/useWallet";
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -28,7 +29,7 @@ import { Progress } from "@/components/ui/progress";
 
 export default function Savings() {
   const navigate = useNavigate();
-  const { wallet, transactions, updateSavingsRate, extendSavingsLock } = useWallet();
+  const { wallet, transactions, updateSavingsRate, extendSavingsLock, refetch } = useWallet();
   const { toast } = useToast();
   const [extendOpen, setExtendOpen] = useState(false);
   const [rateOpen, setRateOpen] = useState(false);
@@ -89,7 +90,8 @@ export default function Savings() {
   };
 
   return (
-    <div className="min-h-screen gradient-bg pb-24">
+    <PullToRefresh onRefresh={async () => { await refetch(); }} className="min-h-screen">
+    <div className="gradient-bg pb-24">
       {/* Header */}
       <header className="px-4 pt-12 pb-4">
         <div className="flex items-center justify-between mb-2">
@@ -369,5 +371,6 @@ export default function Savings() {
 
       <BottomNavigation />
     </div>
+    </PullToRefresh>
   );
 }

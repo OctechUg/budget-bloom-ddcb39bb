@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { BottomNavigation } from "@/components/BottomNavigation";
+import { PullToRefresh } from "@/components/PullToRefresh";
 import { useAuth } from "@/hooks/useAuth";
 import {
   Dialog,
@@ -135,7 +136,8 @@ export default function Profile() {
   }
 
   return (
-    <div className="min-h-screen gradient-bg pb-24">
+    <PullToRefresh onRefresh={async () => {}} className="min-h-screen">
+    <div className="gradient-bg pb-24">
       {/* Header */}
       <header className="px-4 pt-12 pb-6">
         <h1 className="text-2xl font-bold text-foreground mb-6">Settings</h1>
@@ -400,5 +402,6 @@ export default function Profile() {
 
       <BottomNavigation />
     </div>
+    </PullToRefresh>
   );
 }

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { BottomNavigation } from "@/components/BottomNavigation";
+import { PullToRefresh } from "@/components/PullToRefresh";
 import { SetBudgetModal } from "@/components/SetBudgetModal";
 import { SpendModal } from "@/components/SpendModal";
 import { Button } from "@/components/ui/button";
@@ -136,7 +137,7 @@ function SmartAlerts({ categories }: { categories: Category[] }) {
 }
 
 export default function Budget() {
-  const { budgets, setBudget, deleteBudget, spendFromBudget, transactions } = useWallet();
+  const { budgets, setBudget, deleteBudget, spendFromBudget, transactions, refetch } = useWallet();
   const [budgetModalOpen, setBudgetModalOpen] = useState(false);
   const [selectedCat, setSelectedCat] = useState<Category | null>(null);
   const [spendCat, setSpendCat] = useState<{ id: string; name: string; remaining: number } | null>(null);
@@ -177,7 +178,8 @@ export default function Budget() {
   };
 
   return (
-    <div className="min-h-screen gradient-bg pb-28">
+    <PullToRefresh onRefresh={async () => { await refetch(); }} className="min-h-screen">
+    <div className="gradient-bg pb-28">
       <header className="px-4 pt-12 pb-4 max-w-5xl mx-auto">
         <div className="flex items-center justify-between mb-6">
           <div>
@@ -306,5 +308,6 @@ export default function Budget() {
       )}
       <BottomNavigation />
     </div>
+    </PullToRefresh>
   );
 }
