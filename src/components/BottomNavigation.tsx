@@ -1,4 +1,4 @@
-import { Home, Wallet, RefreshCw, BarChart3, FileText } from "lucide-react";
+import { Home, Wallet, BarChart3, Settings } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
@@ -6,8 +6,7 @@ const navItems = [
   { icon: Home, label: "Home", path: "/" },
   { icon: Wallet, label: "Wallet", path: "/wallet" },
   { icon: BarChart3, label: "Budget", path: "/budget" },
-  { icon: RefreshCw, label: "Reports", path: "/reports" },
-  { icon: FileText, label: "Profile", path: "/profile" },
+  { icon: Settings, label: "Settings", path: "/profile" },
 ];
 
 export function BottomNavigation() {

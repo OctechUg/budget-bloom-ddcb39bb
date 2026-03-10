@@ -29,6 +29,7 @@ import {
   Lock,
   Fingerprint,
   LogIn,
+  BarChart3,
 } from "lucide-react";
 
 interface SettingsItemProps {
@@ -111,7 +112,7 @@ export default function Profile() {
     return (
       <div className="min-h-screen gradient-bg pb-24">
         <header className="px-4 pt-12 pb-8">
-          <h1 className="text-2xl font-bold text-foreground mb-6">Profile</h1>
+          <h1 className="text-2xl font-bold text-foreground mb-6">Settings</h1>
         </header>
         <main className="px-4 pt-8 flex flex-col items-center justify-center">
           <div className="glass-card rounded-2xl p-8 text-center max-w-sm w-full">
@@ -137,7 +138,7 @@ export default function Profile() {
     <div className="min-h-screen gradient-bg pb-24">
       {/* Header */}
       <header className="px-4 pt-12 pb-6">
-        <h1 className="text-2xl font-bold text-foreground mb-6">Profile</h1>
+        <h1 className="text-2xl font-bold text-foreground mb-6">Settings</h1>
 
         {/* Profile Card */}
         <div className="glass-card rounded-2xl p-4">
@@ -198,6 +199,13 @@ export default function Profile() {
             Preferences
           </h2>
           <div className="glass-card rounded-2xl overflow-hidden">
+            <SettingsItem
+              icon={<BarChart3 className="h-5 w-5" />}
+              label="Reports"
+              subtitle="Spending trends & analytics"
+              onClick={() => navigate("/reports")}
+            />
+            <div className="h-px bg-border/50 mx-4" />
             <SettingsItem
               icon={<Bell className="h-5 w-5" />}
               label="Notifications"
