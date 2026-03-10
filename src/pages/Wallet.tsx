@@ -53,7 +53,8 @@ export default function Wallet() {
   });
 
   return (
-    <div className="min-h-screen gradient-bg pb-24">
+    <PullToRefresh onRefresh={async () => { await refetch(); toast({ title: "Refreshed" }); }} className="min-h-screen">
+    <div className="gradient-bg pb-24">
       <header className="px-4 pt-12 pb-4">
         <div className="flex items-center justify-between mb-6">
           <button onClick={() => window.history.back()} className="w-10 h-10 rounded-full border border-border flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors">‹</button>
