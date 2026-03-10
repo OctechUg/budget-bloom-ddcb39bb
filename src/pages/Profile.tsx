@@ -200,6 +200,13 @@ export default function Profile() {
           </h2>
           <div className="glass-card rounded-2xl overflow-hidden">
             <SettingsItem
+              icon={<BarChart3 className="h-5 w-5" />}
+              label="Reports"
+              subtitle="Spending trends & analytics"
+              onClick={() => navigate("/reports")}
+            />
+            <div className="h-px bg-border/50 mx-4" />
+            <SettingsItem
               icon={<Bell className="h-5 w-5" />}
               label="Notifications"
               subtitle="Push, email, SMS alerts"
