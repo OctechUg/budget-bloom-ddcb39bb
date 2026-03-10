@@ -91,5 +91,6 @@ export default function Reports() {
 
       <BottomNavigation />
     </div>
+    </PullToRefresh>
   );
 }
