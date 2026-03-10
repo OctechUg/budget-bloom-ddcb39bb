@@ -138,7 +138,7 @@ export default function Profile() {
     <div className="min-h-screen gradient-bg pb-24">
       {/* Header */}
       <header className="px-4 pt-12 pb-6">
-        <h1 className="text-2xl font-bold text-foreground mb-6">Profile</h1>
+        <h1 className="text-2xl font-bold text-foreground mb-6">Settings</h1>
 
         {/* Profile Card */}
         <div className="glass-card rounded-2xl p-4">
