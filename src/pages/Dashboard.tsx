@@ -11,13 +11,14 @@ import { TransferModal } from "@/components/TransferModal";
 import { QuickServices } from "@/components/QuickServices";
 import { NotificationsDropdown } from "@/components/NotificationsDropdown";
 import { BottomNavigation } from "@/components/BottomNavigation";
+import { PullToRefresh } from "@/components/PullToRefresh";
 import { useAuth } from "@/hooks/useAuth";
 import { useWallet } from "@/hooks/useWallet";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import {
   Utensils, Car, Book, ShoppingBag, Coffee,
-  LogIn, RefreshCw, Star, X,
+  LogIn, Star,
 } from "lucide-react";
 
 const iconMap: Record<string, React.ReactNode> = {
