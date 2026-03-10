@@ -29,6 +29,7 @@ import {
   Lock,
   Fingerprint,
   LogIn,
+  BarChart3,
 } from "lucide-react";
 
 interface SettingsItemProps {
