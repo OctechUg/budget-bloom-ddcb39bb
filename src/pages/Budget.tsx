@@ -308,5 +308,6 @@ export default function Budget() {
       )}
       <BottomNavigation />
     </div>
+    </PullToRefresh>
   );
 }

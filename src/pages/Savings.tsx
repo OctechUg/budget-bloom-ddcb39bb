@@ -371,5 +371,6 @@ export default function Savings() {
 
       <BottomNavigation />
     </div>
+    </PullToRefresh>
   );
 }
