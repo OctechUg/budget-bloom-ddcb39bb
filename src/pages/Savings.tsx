@@ -90,7 +90,8 @@ export default function Savings() {
   };
 
   return (
-    <div className="min-h-screen gradient-bg pb-24">
+    <PullToRefresh onRefresh={async () => { await refetch(); }} className="min-h-screen">
+    <div className="gradient-bg pb-24">
       {/* Header */}
       <header className="px-4 pt-12 pb-4">
         <div className="flex items-center justify-between mb-2">
