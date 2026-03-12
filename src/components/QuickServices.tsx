@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Smartphone, Zap, Wifi, Droplets, Tv, GraduationCap, Bus, CreditCard } from "lucide-react";
+import { Smartphone, Zap, Wifi, Tv } from "lucide-react";
 import { ServicePurchaseModal } from "@/components/ServicePurchaseModal";
 import { useToast } from "@/hooks/use-toast";
 
@@ -7,11 +7,7 @@ const services = [
   { icon: Smartphone, label: "Airtime", color: "text-primary" },
   { icon: Wifi, label: "Data", color: "text-secondary" },
   { icon: Zap, label: "Electricity", color: "text-warning" },
-  { icon: Droplets, label: "Water", color: "text-blue-400" },
   { icon: Tv, label: "TV", color: "text-purple-400" },
-  { icon: GraduationCap, label: "School Fees", color: "text-green-400" },
-  { icon: Bus, label: "Transport", color: "text-orange-400" },
-  { icon: CreditCard, label: "More", color: "text-muted-foreground" },
 ];
 
 export function QuickServices() {
@@ -19,10 +15,6 @@ export function QuickServices() {
   const { toast } = useToast();
 
   const handleServiceClick = (label: string) => {
-    if (label === "More") {
-      toast({ title: "More Services", description: "Additional services coming soon!" });
-      return;
-    }
     setSelectedService(label);
   };
 

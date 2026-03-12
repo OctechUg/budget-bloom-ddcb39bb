@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { Eye, EyeOff, TrendingUp, Copy } from "lucide-react";
+import { Eye, EyeOff, TrendingUp } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -42,18 +42,6 @@ export function BalanceCard({
       <div className="absolute -top-12 -right-12 w-32 h-32 bg-primary/20 rounded-full blur-2xl" />
       
       <div className="relative z-10">
-        {/* Wallet ID */}
-        <div className="flex items-center gap-2 mb-4">
-          <div className="px-3 py-1.5 rounded-lg bg-muted/50 border border-border">
-            <span className="text-xs font-mono text-muted-foreground">0xA3...9C78</span>
-          </div>
-          <button 
-            onClick={handleCopy}
-            className="p-1.5 rounded-lg hover:bg-muted/50 text-muted-foreground hover:text-foreground transition-colors"
-          >
-            <Copy className="h-3.5 w-3.5" />
-          </button>
-        </div>
 
         {/* Title */}
         <div className="flex items-center justify-between mb-1">
