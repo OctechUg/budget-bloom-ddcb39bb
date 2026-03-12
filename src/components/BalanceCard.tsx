@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { Eye, EyeOff, TrendingUp, Copy } from "lucide-react";
+import { Eye, EyeOff, TrendingUp } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 

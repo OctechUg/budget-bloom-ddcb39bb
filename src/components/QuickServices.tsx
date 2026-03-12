@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Smartphone, Zap, Wifi, Droplets, Tv, GraduationCap, Bus, CreditCard } from "lucide-react";
+import { Smartphone, Zap, Wifi, Tv } from "lucide-react";
 import { ServicePurchaseModal } from "@/components/ServicePurchaseModal";
 import { useToast } from "@/hooks/use-toast";
 
