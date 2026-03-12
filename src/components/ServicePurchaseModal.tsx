@@ -51,8 +51,6 @@ const serviceToCategoryMap: Record<string, string> = {
   Electricity: "Utilities",
   Water: "Utilities",
   TV: "Entertainment",
-  "School Fees": "Books & Supplies",
-  Transport: "Transport",
 };
 
 export function ServicePurchaseModal({ open, onOpenChange, serviceName, serviceIcon }: ServicePurchaseModalProps) {

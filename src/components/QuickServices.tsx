@@ -15,10 +15,6 @@ export function QuickServices() {
   const { toast } = useToast();
 
   const handleServiceClick = (label: string) => {
-    if (label === "More") {
-      toast({ title: "More Services", description: "Additional services coming soon!" });
-      return;
-    }
     setSelectedService(label);
   };
 
