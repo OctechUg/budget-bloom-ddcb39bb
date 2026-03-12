@@ -42,11 +42,6 @@ const providers: Record<string, { id: string; name: string; icon: string }[]> = 
     { id: "gotv", name: "GOtv", icon: "📡" },
     { id: "startimes", name: "StarTimes", icon: "⭐" },
   ],
-  "School Fees": [{ id: "direct", name: "Direct Payment", icon: "🏫" }],
-  Transport: [
-    { id: "safeboda", name: "SafeBoda", icon: "🏍️" },
-    { id: "bolt", name: "Bolt", icon: "🚗" },
-  ],
 };
 
 // Map service names to likely budget category names
