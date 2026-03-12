@@ -7,11 +7,7 @@ const services = [
   { icon: Smartphone, label: "Airtime", color: "text-primary" },
   { icon: Wifi, label: "Data", color: "text-secondary" },
   { icon: Zap, label: "Electricity", color: "text-warning" },
-  { icon: Droplets, label: "Water", color: "text-blue-400" },
   { icon: Tv, label: "TV", color: "text-purple-400" },
-  { icon: GraduationCap, label: "School Fees", color: "text-green-400" },
-  { icon: Bus, label: "Transport", color: "text-orange-400" },
-  { icon: CreditCard, label: "More", color: "text-muted-foreground" },
 ];
 
 export function QuickServices() {
