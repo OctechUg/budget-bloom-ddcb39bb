@@ -23,8 +23,6 @@ const quickAmounts: Record<string, number[]> = {
   Electricity: [20000, 50000, 100000, 200000],
   Water: [20000, 50000, 100000, 200000],
   TV: [30000, 50000, 80000, 150000],
-  "School Fees": [100000, 500000, 1000000, 2000000],
-  Transport: [5000, 10000, 20000, 50000],
 };
 
 const providers: Record<string, { id: string; name: string; icon: string }[]> = {
