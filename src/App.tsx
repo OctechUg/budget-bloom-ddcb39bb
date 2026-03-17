@@ -11,6 +11,7 @@ import Budget from "./pages/Budget";
 import Reports from "./pages/Reports";
 import Profile from "./pages/Profile";
 import PaymentMethods from "./pages/PaymentMethods";
+import TermsPrivacy from "./pages/TermsPrivacy";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
