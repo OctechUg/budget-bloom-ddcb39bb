@@ -190,7 +190,7 @@ export default function Profile() {
               icon={<CreditCard className="h-5 w-5" />}
               label="Payment Methods"
               subtitle="Mobile money, bank accounts"
-              onClick={() => toast({ title: "Coming Soon", description: "Payment methods management will be available soon." })}
+              onClick={() => navigate("/payment-methods")}
             />
           </div>
         </section>
