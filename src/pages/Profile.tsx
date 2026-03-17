@@ -234,7 +234,7 @@ export default function Profile() {
               icon={<FileText className="h-5 w-5" />}
               label="Terms & Privacy"
               subtitle="Legal documents"
-              onClick={() => toast({ title: "Legal", description: "Opening terms and privacy policy..." })}
+              onClick={() => navigate("/terms-privacy")}
             />
           </div>
         </section>

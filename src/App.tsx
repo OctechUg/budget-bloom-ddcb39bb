@@ -31,6 +31,7 @@ const App = () => (
           <Route path="/reports" element={<Reports />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/payment-methods" element={<PaymentMethods />} />
+          <Route path="/terms-privacy" element={<TermsPrivacy />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
