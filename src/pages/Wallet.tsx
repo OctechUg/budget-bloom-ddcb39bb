@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { BottomNavigation } from "@/components/BottomNavigation";
 import { PullToRefresh } from "@/components/PullToRefresh";
 import { FundDistribution } from "@/components/FundDistribution";
